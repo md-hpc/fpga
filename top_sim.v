@@ -1,0 +1,68 @@
+`timescale 1ns / 1ps
+//////////////////////////////////////////////////////////////////////////////////
+// Company: 
+// Engineer: 
+// 
+// Create Date: 02/17/2025 07:57:53 PM
+// Design Name: 
+// Module Name: ControlUnit
+// Project Name: 
+// Target Devices: 
+// Tool Versions: 
+// Description: 
+// 
+// Dependencies: 
+// 
+// Revision:
+// Revision 0.01 - File Created
+// Additional Comments:
+// 
+//////////////////////////////////////////////////////////////////////////////////
+
+
+module ControlUnit(
+    input clk,
+    input reset,
+    input phase1_done,
+    input phase3_done,
+    output phase1_ready,
+    output phase3_ready,
+    output double_buffer
+    );
+    reg phase;
+    reg double_buff;
+    assign double_buffer = double_buff;
+    assign phase1_ready = phase == 0;
+    assign phase3_ready = phase == 1;
+    // PHASE 1 -> phase = 0
+    // PHASE 3 -> phase = 1
+    always @(posedge clk, posedge reset) begin
+        if(reset) begin
+            phase <= 0;
+            double_buff <= 0;
+        end else begin
+            if(phase == 0 && phase1_done == 1) begin
+                phase <= 1;
+            end else if (phase == 1 && phase3_done == 1) begin
+                phase <= 0;
+                double_buff <= ~double_buff;
+            end
+        end
+    end
+endmodule
+
+
+/*
+
+        if self.phase == PHASE1 and self.phase1_done.get():
+            self.phase = PHASE3
+        elif self.phase == PHASE3 and self.phase3_done.get():
+            self.phase = PHASE1
+            self._double_buffer = 0 if self._double_buffer else 1
+            self.t += 1
+
+        self.double_buffer.set(self._double_buffer)
+        self.phase1_ready.set(self.phase == PHASE1)
+        self.phase3_ready.set(self.phase == PHASE3)
+        
+        */
