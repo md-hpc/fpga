@@ -24,17 +24,18 @@ module VelocityRingNode #(parameter NSIZE=256, parameter DBSIZE=256)(
     input  clk,
     input  reset,
     input [31:0] Cell,
-    input  [32*4:0] prev,
-    input  [31:0] prev_cell,
-    output [32*4:0] next,
-    output [31:0] next_cell,
+    input  [105:0] prev,
+    input  [7:0] prev_cell,
+    output [105:0] next,
+    output [7:0] next_cell,
     output rempty,
-    input [(32)*4:0] neighbor,
-    input [(31):0] neighbor_cell,
-    input [32*4:0] reference,
-    input [31:0] reference_cell,
+    input [105:0] neighbor,
+    input [7:0] neighbor_cell,
+    input [105:0] reference,
+    input [7:0] reference_cell,
     output [32*3:0] fragment_out,
-    output [32:0] addr
+    output [31:0] addr,
+    output reg [31:0] v_iaddr
     );
     // Newer Logic
     genvar i;
@@ -42,51 +43,80 @@ module VelocityRingNode #(parameter NSIZE=256, parameter DBSIZE=256)(
     reg [3:0] counter;
     
     reg emp_out;
+    reg delayed_emp_out;
     reg emp_next;
-    
-    wire [159:0] inputs [2:0];
-    
-    
-    wire q_empty_next, wr_en_next, rd_en_next, q_full_next;
-    
-    wire [159:0] data_in;
-    wire [159:0] data_out_next;
+    reg delayed_emp_next;
     
     
+    wire [113:0] inputs [2:0];
     
-    wire q_empty_out, wr_en_out, rd_en_out, q_full_out;
     
-    wire [159:0] data_out_out;
+    wire q_empty_next, wr_en_next, q_full_next;
+    
+    wire [113:0] data_in;
+    wire [113:0] data_out_next;
+    
+    
+    
+    wire q_empty_out, wr_en_out, q_full_out;
+    
+    wire [113:0] data_out_out;
     
     wire [31:0] neg_out;
     
-    assign inputs[0] = {Cell, reference};
+    
+    wire [105:0] probe;
+    reg [96:0] popped_out;
+    reg [96:0] popped_next;
+    assign inputs[0] = {reference_cell, reference};
     assign inputs[1] = {neighbor_cell, neighbor};
     assign inputs[2] = {prev_cell, prev};
     
-    assign {neg_out,fragment_out,addr} = (emp_out)? {{32{1'b0}},{1'b1,{95{1'b0}}},{32{1'b0}}}: data_out_out;
-    assign {next_cell,next} = (emp_next) ? {{32{1'b0}},{1'b1,{95{1'b0}}},{32{1'b0}}}: data_out_next;
-    assign data_in = inputs[counter];
-    assign wr_en_out = (inputs[counter][32*4+:32] == Cell && counter<3 && inputs[counter][32*3]==0);
-    assign wr_en_next = (inputs[counter][32*4+:32] != Cell && counter<3 && inputs[counter][32*3]==0);
-    assign rd_en = counter == 3;
-    VelocityQueueFIFO vq_next(.empty(q_empty_next),.srst(reset),.clk(clk),.din(data_in),.wr_en(wr_en_next),.full(q_full_next),.rd_en(rd_en_next),.dout(fata_out_next));
-    VelocityQueueFIFO vq_out(.empty(q_empty_out),.srst(reset),.clk(clk),.din(data_in),.wr_en(wr_en_out),.full(q_full_out),.rd_en(rd_en_out),.dout(data_out_out));
     
-    assign rempty = emp_out & emp_next;
+    assign probe = data_out_out[0+:96];
+    assign fragment_out =(emp_out || popped_out == data_out_out[0+:97])?{1'b1,{96{1'b0}}}: data_out_out[0+:97];
+    assign addr = data_out_out[97+:9];
+    //assign {neg_out,fragment_out,addr} = (emp_out)? {{32{1'b0}},{1'b1,{95{1'b0}}},{32{1'b0}}}: data_out_out;
+    assign {next_cell,next} = (emp_next || popped_next == data_out_next[0+:97]) ? {{8{1'b0}},{{9{1'b0}},1'b1,{96{1'b0}}}}: data_out_next;
+    assign data_in = counter < 3 ?inputs[counter] : 0;
+    assign wr_en_out = (inputs[counter][106+:8] == Cell[0+:8] && counter<3 && inputs[counter][32*3]==0);
+    assign wr_en_next = (inputs[counter][106+:8] != Cell[0+:8] && counter<3 && inputs[counter][32*3]==0);
+    assign rd_en = counter == 15;
+    VelocityQueueFIFO vq_next(.empty(q_empty_next),.srst(reset),.clk(clk),.din(data_in),.wr_en(wr_en_next),.full(q_full_next),.rd_en(rd_en),.dout(data_out_next));
+    VelocityQueueFIFO vq_out(.empty(q_empty_out),.srst(reset),.clk(clk),.din(data_in),.wr_en(wr_en_out),.full(q_full_out),.rd_en(rd_en),.dout(data_out_out));
+    
     assign rempty = emp_out & emp_next;
     
     
     always @(posedge clk) begin
         if(reset) begin
-            counter <= 0;
-        end begin
+            counter <= 15;
+            delayed_emp_out <= 1;
+            delayed_emp_next <= 1;
+            emp_out <= q_empty_out;
+            emp_next <= q_empty_next;
+        end else begin
             if(counter == 15) begin
+                popped_out <= data_out_out[0+:97];
+                popped_next <= data_out_next[0+:97];
+                v_iaddr <= addr;
                 counter <= 0;
-            end else begin
-                counter <= counter + 1;
                 emp_out <= q_empty_out;
                 emp_next <= q_empty_next;
+                if(delayed_emp_out == 1) begin
+                    delayed_emp_out <= q_empty_out;
+                end else begin
+                    delayed_emp_out <= emp_out;
+                end
+                
+                if(delayed_emp_next == 1) begin
+                    delayed_emp_next <= q_empty_next;
+                end else begin
+                    delayed_emp_next <= emp_next;
+                end
+            end else begin
+                counter <= counter + 1;
+                
             end
             
         end

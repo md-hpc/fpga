@@ -25,11 +25,12 @@ module ControlUnit(
     input reset,
     input phase1_done,
     input phase3_done,
+    input mem_set,
     output phase1_ready,
     output phase3_ready,
     output double_buffer
     );
-    reg phase;
+    reg [1:0] phase;
     reg double_buff;
     assign double_buffer = double_buff;
     assign phase1_ready = phase == 0;
@@ -38,15 +39,20 @@ module ControlUnit(
     // PHASE 3 -> phase = 1
     always @(posedge clk, posedge reset) begin
         if(reset) begin
-            phase <= 0;
+            phase <= 2;
             double_buff <= 0;
         end else begin
-            if(phase == 0 && phase1_done == 1) begin
-                phase <= 1;
-            end else if (phase == 1 && phase3_done == 1) begin
-                phase <= 0;
-                double_buff <= ~double_buff;
+            if(mem_set && phase == 2) begin
+                phase <= 1; //Change this back to 0!!!!!
+            end else if(mem_set && phase == 0) begin
+                if(phase == 0 && phase1_done == 1) begin
+                    phase <= 1;
+                end else if (phase == 1 && phase3_done == 1) begin
+                    phase <= 0;
+                    double_buff <= ~double_buff;
+                end
             end
+            
         end
     end
 endmodule

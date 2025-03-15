@@ -24,37 +24,38 @@ module modd_cell(
     input [31:0] a,
     input [31:0] b,
     input [31:0] M,
-    output [31:0] o,
+    output [32:0] o,
     output [31:0] o_abs
     );
     //opts = [(b-M)-a, b-a, (b+M)-a]
-    
-    wire [31:0] opta;
-    wire [31:0] opta_abs;
-    wire [31:0] optb;
-    wire [31:0] optb_abs;
-    wire [31:0] optc;
-    wire [31:0] optc_im;
-    wire [31:0] optc_abs;
-    
-    wire [31:0] comp_im;
-    wire [31:0] comp_im_abs;
-    
-    
-    assign opta = optb - M;
-    assign opta_abs = (opta[31] == 0)? opta: ~opta+1;
-    assign optb_abs = (optb[31] == 0)? optb: ~optb+1;
-    assign optc_abs = (optc[31] == 0)? optc: ~optc+1;
-    
-    
-    assign optb = b - a;
-    
-    assign optc = optb + M;
-    
-    assign comp_im = (opta_abs < optb_abs)? opta : optb;
-    assign comp_im_abs = (opta_abs < optb_abs)? opta_abs : optb_abs;
-    assign o = (comp_im < optc_abs)? comp_im : optc;
-    assign o_abs = (comp_im < optc_abs)? comp_im : optc_abs;
-    
+    // Internal signed wires to hold the options
+
+    // Pre-extended signed inputs
+    wire signed [32:0] a_s =  $signed(a);
+    wire signed [32:0] b_s = $signed(b);
+    wire signed [32:0] M_s =  $signed(M);
+
+    // Option candidates
+    wire signed [32:0] opt0 = b_s - M_s - a_s;
+    wire signed [32:0] opt1 = b_s - a_s;
+    wire signed [32:0] opt2 = b_s + M_s - a_s;
+
+    // Absolute values of options
+    wire [32:0] abs0 = (opt0 < 0) ? -opt0 : opt0;
+    wire [32:0] abs1 = (opt1 < 0) ? -opt1 : opt1;
+    wire [32:0] abs2 = (opt2 < 0) ? -opt2 : opt2;
+
+    // Minimum selector (one-hot encoding of selection)
+    wire sel0 = (abs0 <= abs1) && (abs0 <= abs2);
+    wire sel1 = (abs1 < abs0) && (abs1 <= abs2);
+    wire sel2 = (abs2 < abs0) && (abs2 < abs1);
+
+    // Final result based on selection
+    assign o = sel0 ? opt0 :
+                    sel1 ? opt1 :
+                    opt2;
+    assign o_abs = sel0 ? abs0[0+:32] :
+                    sel1 ? abs1[0+:32] :
+                    abs2[0+:32];
 endmodule
 

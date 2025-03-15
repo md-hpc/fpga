@@ -35,12 +35,12 @@ module phase_3 #(parameter N_CELL = 27)(
     output[(N_CELL)-1:0] wr_en
     
     );
-    
+    wire [N_CELL-1:0] stop_we;
     wire [N_CELL-1:0] block;
-    wire [32:0] overwrite_addr[13:0];
+    wire [32:0] overwrite_addr[N_CELL-1:0];
     wire [(32*3):0] ring_pos_reg [N_CELL-1:0];
     wire [(32*3):0] ring_vel_reg [N_CELL-1:0];
-    wire [(32*3):0] ring_cell_reg [N_CELL-1:0];
+    wire [(32):0] ring_cell_reg [N_CELL-1:0];
     genvar i;
 generate
     for (i = 0; i < N_CELL; i = i + 1) begin 
@@ -54,7 +54,8 @@ generate
             .block(block[i]),
             .done(CTL_DONE[i]),
             .oaddr(oaddr[i*32+:32]),
-            .overwrite_addr(overwrite_addr[i])
+            .overwrite_addr(overwrite_addr[i]),
+            .stop_we(stop_we[i])
         );
 
         PositionUpdater pu (
@@ -71,13 +72,14 @@ generate
             .iaddr(iaddr[i*32+:32]),
             .vo(w_v_caches[i*97+:97]),
             .po(w_p_caches[i*97+:97]),
-            .done(CTL_DONE[i+14]),
+            .done(CTL_DONE[i+N_CELL]),
             .block(block[i]),
-            .nodePosOut(ring_pos_reg[(i+1)%N_CELL]),
-            .nodeVelOut(ring_vel_reg[(i+1)%N_CELL]),
-            .nodeCellOut(ring_cell_reg[(i+1)%N_CELL]),
+            .nodePOut(ring_pos_reg[(i+1)%N_CELL]),
+            .nodeVOut(ring_vel_reg[(i+1)%N_CELL]),
+            .nodeCOut(ring_cell_reg[(i+1)%N_CELL]),
             .Cell(i),
-            .we(wr_en[i])
+            .we(wr_en[i]),
+            .stop_we(stop_we[i])
         );
     end
 endgenerate

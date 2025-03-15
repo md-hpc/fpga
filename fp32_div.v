@@ -5,9 +5,6 @@ module fp32_div (
 );
 
 
-wire [31:0] n1;
-wire [31:0] n2;
-wire [31:0] result;
 wire out_valid;
 			
 

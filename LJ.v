@@ -20,7 +20,7 @@
 //////////////////////////////////////////////////////////////////////////////////
 
 
-module LJ #(parameter LJ_MAX = 32'h43bfb70a)(
+module LJ #(parameter LJ_MAX = 32'h43bfb70a, parameter CUTOFF = 32'h40200000, parameter UNIVERSE_SIZE = 32'h40400000, parameter DT = 32'h33d6bf95)(
     input [95:0] reference,
     input [95:0] neighbor,
     output [95:0] lj_out
@@ -43,6 +43,7 @@ module LJ #(parameter LJ_MAX = 32'h43bfb70a)(
     
     wire [95:0] lj;
     wire [95:0] min_lj;
+    wire [95:0] true_lj;
     modr m(reference,neighbor,mod);
     Norm norm(mod,r2);
     
@@ -67,9 +68,14 @@ module LJ #(parameter LJ_MAX = 32'h43bfb70a)(
     fp32_mul mul_b(dist[32+:32],coeff,lj[32+:32]);
     fp32_mul mul_c(dist[64+:32],coeff,lj[64+:32]);
     
-    fp32_abs_comp comp_a(lj[0+:32],LJ_MAX,min_lj[0+:32]);
-    fp32_abs_comp comp_b(lj[32+:32],LJ_MAX,min_lj[32+:32]);
-    fp32_abs_comp comp_c(lj[64+:32],LJ_MAX,min_lj[64+:32]);
-    assign lj_out = r2 == 0? {95{1'b0}} : min_lj; 
+    fp32_abs_comp_lj comp_a(lj[0+:32],LJ_MAX,min_lj[0+:32]);
+    fp32_abs_comp_lj comp_b(lj[32+:32],LJ_MAX,min_lj[32+:32]);
+    fp32_abs_comp_lj comp_c(lj[64+:32],LJ_MAX,min_lj[64+:32]);
+    
+    fp32_mul mul_fina(min_lj[0+:32],DT,true_lj[0+:32]);
+    fp32_mul mul_finb(min_lj[32+:32],DT,true_lj[32+:32]);
+    fp32_mul mul_finc(min_lj[64+:32],DT,true_lj[64+:32]);
+    
+    assign lj_out = r2 == 0? {95{1'b0}} : true_lj; 
     
 endmodule

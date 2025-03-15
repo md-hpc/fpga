@@ -23,41 +23,49 @@
 module PairQueue(
     input  clk,
     input  reset,
-    input  [194 * 14 - 1:0] in,
-    output [193:0] out,
+    input  [226:0] in,
+    output [226:0] out,
     output qempty
     );
     genvar i;
     reg emp;
-    wire empty;
     reg [3:0] counter;
     
-    wire [193:0] inputs [13:0];
-    
+    wire [226:0] im_out;
+    //wire [193:0] inputs [13:0];
+    reg delayed_emp;
     
     wire q_empty, wr_en, rd_en, q_full;
     
-    wire [193:0] data_in;
-    wire [193:0] data_out;
+    wire [226:0] data_in;
+    /*
     generate
         for(i = 0; i < 14; i = i + 1) begin
             assign inputs[i] = in[194*i+:194];
         end  
     endgenerate
-    
+    */
     assign qempty = emp;
-    assign data_in = in[194*counter+:194];
-    assign wr_en = (counter < 14 && inputs[counter][193] == 0);
-    assign rd_en = counter == 14;
-    PairQueueFIFO pq(.empty(empty),.srst(reset),.clk(clk),.din(inputs[counter]),.wr_en(wr_en),.full(q_full),.rd_en(rd_en),.dout(out));
+    assign data_in = in;
+    assign wr_en = (counter < 14 && in[226] == 0);
+    assign rd_en = counter == 15;
+    assign out = (emp)? {1'b1,{226{1'b0}}}:im_out;
+    PairQueueFIFO pq(.empty(q_empty),.srst(reset),.clk(clk),.din(in),.wr_en(wr_en),.full(q_full),.rd_en(rd_en),.dout(im_out));
     
     always @(posedge clk) begin
         if(reset) begin
-            counter <= 0;
-        end begin
+            counter <= 4'd15;
+            emp <= q_empty;
+            delayed_emp <= 1;
+        end else begin
             if(counter == 15) begin
                 counter <= 0;
                 emp <= q_empty;
+                if(delayed_emp == 1) begin
+                    delayed_emp <= q_empty;
+                end else begin
+                    delayed_emp <= emp;
+                end
             end else begin
                 counter <= counter + 1;
             end

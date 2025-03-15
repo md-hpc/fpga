@@ -3,9 +3,9 @@
 // Company: 
 // Engineer: 
 // 
-// Create Date: 02/15/2025 05:11:53 PM
+// Create Date: 03/02/2025 01:00:56 PM
 // Design Name: 
-// Module Name: Noop
+// Module Name: mem_init
 // Project Name: 
 // Target Devices: 
 // Tool Versions: 
@@ -20,10 +20,22 @@
 //////////////////////////////////////////////////////////////////////////////////
 
 
-module Noop(
-    input [113:0] i,
-    output [113:0] o
+module mem_init #(parameter N_CELL = 27)(
+        input clk,
+        input reset,
+        input position_ready,
+        input velocity_ready,
+        input bram_index,
+        output [8:0] address
     );
+    reg [8:0] index [N_CELL-1:0];
     
-    assign o = i;
+    always @(posedge clk) begin
+        if(reset) begin
+        
+        end else  begin
+            
+        end
+    end
+    
 endmodule
