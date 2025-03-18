@@ -29,14 +29,14 @@ module phase_3 #(parameter N_CELL = 27)(
     output [(N_CELL*32)-1:0] oaddr,
     input [(N_CELL*97)-1:0] r_v_caches,
     input [(N_CELL*97)-1:0] r_p_caches,
-    output [32*N_CELL:0] iaddr,
+    output [32*N_CELL-1:0] iaddr,
     output [(N_CELL*97)-1:0] w_v_caches,
     output [(N_CELL*97)-1:0] w_p_caches,
     output[(N_CELL)-1:0] wr_en
     
     );
     wire [N_CELL-1:0] stop_we;
-    wire [N_CELL-1:0] block;
+    wire [1:0] block [N_CELL-1:0];
     wire [32:0] overwrite_addr[N_CELL-1:0];
     wire [(32*3):0] ring_pos_reg [N_CELL-1:0];
     wire [(32*3):0] ring_vel_reg [N_CELL-1:0];

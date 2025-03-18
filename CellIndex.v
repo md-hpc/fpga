@@ -175,12 +175,12 @@ float_to_int intc (
     );
     
     assign cIndex[0+:32] = probe_a%3 + (probe_b%3)*3+ (probe_c%3)*9;
-    assign cIndex[32] = pi[96] ^ vi[96];
+    assign cIndex[32] = pi[96] | vi[96];
     assign shifted_mantissa = {1'b1, temp_out[22:0]} << (temp_out[30:23] - 127);
     //assign cIndex = {{24{1'b0}},shifted_mantissa[30:23]};
     assign newp[0+:32] = mod_a[0+:32]; 
     assign newp[32+:32] = mod_b[0+:32];
     assign newp[64+:32] = mod_c[0+:32];
-    assign newp[96] = pi[96] ^ vi[96];
+    assign newp[96] = pi[96] | vi[96];
     // NEWCELL = ((pi[7:0]+ vi) % L)/CUTOFF)%UNIVERSE_SIZE) + ((pi[15:8]+ vi) % L)/CUTOFF)%UNIVERSE_SIZE)*UNIVERSE_SIZE + ((pi[23:16]+ vi) % L)/CUTOFF)%UNIVERSE_SIZE) * UNIVERSE_SIZE * UNIVERSE_SIZE
 endmodule

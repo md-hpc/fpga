@@ -37,7 +37,7 @@ module PositionUpdater #(parameter DBSIZE = 256, parameter L = 10, parameter cut
     output reg [(32*3):0] po,
     output reg we,
     output reg done,
-    output reg block,
+    output [1:0] block,
     output  [(32*3):0] nodePOut,
     output  [(32*3):0] nodeVOut,
     output  [32:0] nodeCOut
@@ -63,19 +63,20 @@ module PositionUpdater #(parameter DBSIZE = 256, parameter L = 10, parameter cut
     assign nodeVOut = (nodeVelOut != _nodeVelOut)? nodeVelOut : {1'b1,{96{1'b0}}};
     assign nodeCOut = (nodeCellOut != _nodeCellOut)? nodeCellOut : {1'b1,{32{1'b0}}};
     
-    
+    assign block = (rst || !rdy || overwrite_addr[32] != 1'b1)? 2'b11: 
+                    (nodePos[96] != 1'b1 && nodeVel[96] != 1'b1 && nodeCell[32] != 1'b1)?2'b01:2'b00 ;
     always @(negedge clk or posedge rst) begin
         _nodePosOut <= nodePosOut;
         _nodeVelOut <= nodeVelOut;
         _nodeCellOut <= nodeCellOut;
         rdy <= ready;
         if (rst) begin
-            new_addr[32] <= 1'b1;
+            new_addr <= {1'b1,{32{1'b0}}};
             nodePos <= {1'b1,{96{1'b0}}};
             nodeVel <= {1'b1,{96{1'b0}}};
             nodeCell <= {1'b1,{32{1'b0}}};
             done <= 0;
-            block <= 0;
+            //block <= 2'b11;
             iaddr <= {1'b1,{32{1'b0}}};
             vo <= {1'b1,{96{1'b0}}};
             po <= {1'b1,{96{1'b0}}};
@@ -83,11 +84,12 @@ module PositionUpdater #(parameter DBSIZE = 256, parameter L = 10, parameter cut
             nodePosOut <= {1'b1,{96{1'b0}}};
             nodeVelOut <= {1'b1,{96{1'b0}}};
             nodeCellOut <= {1'b1,{32{1'b0}}};
-        end else if (ready) begin
-            new_addr <= {1'b1,{32{1'b0}}};
+        end else if (!rdy) begin
+            new_addr <= (double_buffer == 1) ?  0 : DBSIZE;
             done <= 0;
-            block <= 0;
-            iaddr <= {1'b1,{32{1'b0}}};
+            //block <= 2'b11;
+            iaddr[32] <= 1'b0;
+            iaddr[0+:32] <= (double_buffer == 1) ?  0 : DBSIZE;
             vo <= {1'b1,{96{1'b0}}};
             po <= {1'b1,{96{1'b0}}};
             we <= 1'b0;
@@ -103,14 +105,20 @@ module PositionUpdater #(parameter DBSIZE = 256, parameter L = 10, parameter cut
             nodePosOut <= {1'b1,{96{1'b0}}};
             nodeVelOut <= {1'b1,{96{1'b0}}};
             nodeCellOut <= {1'b1,{32{1'b0}}};
-            block <= 0;
+            //block <= 2'b11;
         end else if (nodePos[96] != 1'b1 && nodeVel[96] != 1'b1 && nodeCell[32] != 1'b1) begin
             done <= 0;
-            block <= 1;
+            //block <= 2'b01;
+            nodePos <= {1'b1,{96{1'b0}}};
+            nodeVel <= {1'b1,{96{1'b0}}};
+            nodeCell <= {1'b1,{32{1'b0}}};
             if (nodeCell != Cell) begin
                 nodePosOut <= nodePos;
                 nodeVelOut <= nodeVel;
                 nodeCellOut <= nodeCell;
+                 nodePos <= {1'b1,{96{1'b0}}};
+                 nodeVel <= {1'b1,{96{1'b0}}};
+                 nodeCell <= {1'b1,{32{1'b0}}};
                 we <= 1'b0;
             end else begin
                 nodePosOut <= {1'b1,{96{1'b0}}};
@@ -127,11 +135,11 @@ module PositionUpdater #(parameter DBSIZE = 256, parameter L = 10, parameter cut
 
             if (pi[96] == 1'b1 && vi[96] == 1'b1  && nodePosIn[96] == 1'b1  && nodeVelIn[96] == 1'b1  && nodeCellIn[32] == 1'b1 ) begin
                 done <= 1;
-                iaddr[32] <= 1'b1;
+                //iaddr <= {1'b1,{32{1'b0}}};
                 po <= {1'b1,{96{1'b0}}};
                 vo <= {1'b1,{96{1'b0}}};
                 we <= 1'b0;
-                block <= 0;
+                //block <= 2'b00;
                 nodePosOut <= {1'b1,{96{1'b0}}};
                 nodeVelOut <= {1'b1,{96{1'b0}}};
                 nodeCellOut <= {1'b1,{32{1'b0}}};
@@ -141,21 +149,22 @@ module PositionUpdater #(parameter DBSIZE = 256, parameter L = 10, parameter cut
                 // Assume vi * DT = vi, since DT = 1
                 // NEWCELL = ((pi[7:0]+ (vi * DT)) % L)/CUTOFF)%UNIVERSE_SIZE) + ((pi[15:8]+ (vi * DT)) % L)/CUTOFF)%UNIVERSE_SIZE)*UNIVERSE_SIZE + ((pi[23:16]+ (vi * DT)) % L)/CUTOFF)%UNIVERSE_SIZE) * UNIVERSE_SIZE * UNIVERSE_SIZE
                 // NEWCELL = ((pi[7:0]+ vi) % L)/CUTOFF)%UNIVERSE_SIZE) + ((pi[15:8]+ vi) % L)/CUTOFF)%UNIVERSE_SIZE)*UNIVERSE_SIZE + ((pi[23:16]+ vi) % L)/CUTOFF)%UNIVERSE_SIZE) * UNIVERSE_SIZE * UNIVERSE_SIZE
-                
+                iaddr <= new_addr;
+                new_addr <= new_addr + 1;
                 
                 //Cell == NEWCELL
                 if(Cell == cIndex) begin
                     po <= newp;
                     vo <= vi;
                     we <= 1'b1;
-                    iaddr <= new_addr;
-                    new_addr <= new_addr + 1;
-                    block <=0;
+                    
+                    iaddr[32] = 1'b0;
+                    //block <=2'b00;
                     nodePosOut <= {1'b1,{96{1'b0}}};
                     nodeVelOut <= {1'b1,{96{1'b0}}};
                     nodeCellOut <= {1'b1,{32{1'b0}}};
                 end else begin
-                    block <= 1;
+                    //block <= 2'b00;
                     nodePosOut <= newp;
                     nodeVelOut <= vi;
                     nodeCellOut <= cIndex;
