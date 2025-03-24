@@ -155,7 +155,7 @@ module PositionRingNode #(parameter NSIZE=14, parameter DBSIZE=256)(
                
                if(prev[96] != 1'b1 && prev_cell != Cell) begin
                     if(n3l_o == 1) begin
-                         neighbor_buffer[i] <= {prev[97+:9] + double_buffer*DBSIZE,prev_cell,prev[0+:97]};
+                         neighbor_buffer[i] <= {prev[97+:9],prev_cell,prev[0+:97]};
                         i = i + 1;
                     end
                     next <= prev;
