@@ -85,11 +85,11 @@ module PositionUpdater #(parameter DBSIZE = 256, parameter L = 10, parameter cut
             nodeVelOut <= {1'b1,{96{1'b0}}};
             nodeCellOut <= {1'b1,{32{1'b0}}};
         end else if (!rdy) begin
-            new_addr <= (double_buffer == 1) ?  0 : DBSIZE;
+            new_addr <= (double_buffer[0] == 1) ?  0 : DBSIZE;
             done <= 0;
             //block <= 2'b11;
             iaddr[32] <= 1'b0;
-            iaddr[0+:32] <= (double_buffer == 1) ?  0 : DBSIZE;
+            iaddr[0+:32] <= (double_buffer[0] == 1) ?  0 : DBSIZE;
             vo <= {1'b1,{96{1'b0}}};
             po <= {1'b1,{96{1'b0}}};
             we <= 1'b0;
