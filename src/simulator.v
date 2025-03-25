@@ -20,7 +20,7 @@
 //////////////////////////////////////////////////////////////////////////////////
 
 
-module simulator#(parameter N_CELL = 27, parameter N_PARTICLES = 300)(
+module simulator#(parameter N_CELL = 14, parameter N_PARTICLES = 300)(
 //input clk,
 input fast_clk,
 input reset,
@@ -131,7 +131,7 @@ for(i = 0; i < N_CELL; i = i + 1) begin
     BlockRAM VBRAM(.clka(clk),.clkb(clk),.ena(1'b1),.wea(v_wea[i]),.addra(v_addra[i]),.dina(v_dina[i]),.enb(1'b1),.addrb(v_addrb[i]),.doutb(v_doutb[i]));
     
 end
-for(i = 1; i < 28; i = i + 1) begin
+for(i = 1; i < N_CELL+1; i = i + 1) begin
     assign phase3_done_w_acc[i] = phase3_done_w_acc[i-1] & phase3_done_w_out[i];
 end
 endgenerate

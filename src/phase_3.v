@@ -20,7 +20,7 @@
 //////////////////////////////////////////////////////////////////////////////////
 
 
-module phase_3 #(parameter N_CELL = 27)(
+module phase_3 #(parameter N_CELL = 14)(
     input clk,
     input reset,
     input CTL_READY,

@@ -118,7 +118,6 @@ module CellIndex #(parameter L = 32'h40f00000, parameter CUTOFF = 32'h40200000, 
     wire [31:0] _probe_c;
     wire [31:0] probe_c;
     
-     fp_mult mult(.s_axis_a_tdata(a),.s_axis_a_tvalid(1),.s_axis_b_tvalid(1),.s_axis_b_tdata(b),.m_axis_result_tdata(out_valid));
 
  floating_point_1 inta (.s_axis_a_tdata(modd_a[0+:32]),.s_axis_a_tvalid(1),.m_axis_result_tdata(_probe_a));
 
