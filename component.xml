@@ -1516,7 +1516,7 @@
         <xilinx:xpmLibrary>XPM_MEMORY</xilinx:xpmLibrary>
       </xilinx:xpmLibraries>
       <xilinx:coreRevision>2</xilinx:coreRevision>
-      <xilinx:coreCreationDateTime>2025-03-25T13:27:00Z</xilinx:coreCreationDateTime>
+      <xilinx:coreCreationDateTime>2025-03-25T13:53:56Z</xilinx:coreCreationDateTime>
       <xilinx:sdxKernelAttributes>
         <xilinx:sdx_kernel>true</xilinx:sdx_kernel>
         <xilinx:sdx_kernel_type>rtl</xilinx:sdx_kernel_type>
