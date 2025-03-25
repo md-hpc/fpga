@@ -27,15 +27,8 @@ module fp32_add (
     output  [31:0] o   // FP32 output (A + B)
 );
 wire out_valid;
-add_sub add (
-  1'b1,
-  a,
-  1'b1,
-  b,
-  1'b1,
-  {{7{1'b0}},sub},
-  out_valid,
-  o
-);
+
+addsub add (.s_axis_a_tdata(a),.s_axis_a_tvalid(1),.s_axis_b_tvalid(1),.s_axis_b_tdata({b[31]^sub,b[0+:31]}),.m_axis_result_tdata(out_valid));
+
 
 endmodule

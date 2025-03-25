@@ -118,27 +118,13 @@ module CellIndex #(parameter L = 32'h40f00000, parameter CUTOFF = 32'h40200000, 
     wire [31:0] _probe_c;
     wire [31:0] probe_c;
     
-    
-    float_to_int inta (
-  1'b1,
-  modd_a[0+:32],
-  modda_valid,
-  _probe_a
-);
+     fp_mult mult(.s_axis_a_tdata(a),.s_axis_a_tvalid(1),.s_axis_b_tvalid(1),.s_axis_b_tdata(b),.m_axis_result_tdata(out_valid));
 
-float_to_int intb (
-  1'b1,
-  modd_b[0+:32],
-  moddb_valid,
-  _probe_b
-);
+ floating_point_1 inta (.s_axis_a_tdata(modd_a[0+:32]),.s_axis_a_tvalid(1),.m_axis_result_tdata(_probe_a));
 
-float_to_int intc (
-  1'b1,
-  modd_c[0+:32],
-  moddc_valid,
-  _probe_c
-);
+floating_point_1 intb (.s_axis_a_tdata(modd_b[0+:32]),.s_axis_a_tvalid(1),.m_axis_result_tdata(_probe_b));
+
+floating_point_1 intc (.s_axis_a_tdata(modd_c[0+:32]),.s_axis_a_tvalid(1),.m_axis_result_tdata(_probe_c));
     
     assign probe_a = (modd_a[0+:32] == {32{1'b0}})? 0 : _probe_a - 1;
     assign probe_b = (modd_b[0+:32] == {32{1'b0}})? 0 : _probe_b - 1;

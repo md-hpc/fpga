@@ -41,7 +41,7 @@ module PositionUpdateController #(parameter DBSIZE = 256)(
                             (!ready)? (double_buffer == 1) ? DBSIZE : 0 :_raddr;
     assign oaddr = out_wire;
     
-    always @(posedge clk or posedge rst) begin
+    always @(posedge clk) begin
         stop_we <= overwrite_addr[32];
         if(rst) begin
             raddr <= 0;
