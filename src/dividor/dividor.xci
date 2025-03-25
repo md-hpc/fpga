@@ -2,10 +2,9 @@
   "schema": "xilinx.com:schema:json_instance:1.0",
   "ip_inst": {
     "xci_name": "dividor",
-    "cell_name": "inst_MD_wrapper/sim/phase1/genblk1[0].cp/fp/lj/div_a/division_c/dividor",
     "component_reference": "xilinx.com:ip:floating_point:7.1",
     "ip_revision": "15",
-    "gen_directory": "../../../../../../../../../users/fadik/appdata/roaming/xilinx/ip_repo/new/tmp_edit_project.gen/sources_1/ip/dividor",
+    "gen_directory": "./",
     "parameters": {
       "component_parameters": {
         "Component_Name": [ { "value": "dividor", "resolve_type": "user", "usage": "all" } ],
@@ -148,11 +147,11 @@
         "IPCONTEXT": [ { "value": "IP_Flow" } ],
         "IPREVISION": [ { "value": "15" } ],
         "MANAGED": [ { "value": "TRUE" } ],
-        "OUTPUTDIR": [ { "value": "../../../../../../../../../users/fadik/appdata/roaming/xilinx/ip_repo/new/tmp_edit_project.gen/sources_1/ip/dividor" } ],
+        "OUTPUTDIR": [ { "value": "./" } ],
         "SELECTEDSIMMODEL": [ { "value": "" } ],
         "SHAREDDIR": [ { "value": "." } ],
         "SWVERSION": [ { "value": "2023.1" } ],
-        "SYNTHESISFLOW": [ { "value": "GLOBAL" } ]
+        "SYNTHESISFLOW": [ { "value": "OUT_OF_CONTEXT" } ]
       }
     },
     "boundary": {

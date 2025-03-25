@@ -65,7 +65,7 @@ module PositionUpdater #(parameter DBSIZE = 256, parameter L = 10, parameter cut
     
     assign block = (rst || !rdy || overwrite_addr[32] != 1'b1)? 2'b11: 
                     (nodePos[96] != 1'b1 && nodeVel[96] != 1'b1 && nodeCell[32] != 1'b1)?2'b01:2'b00 ;
-    always @(negedge clk or posedge rst) begin
+    always @(negedge clk) begin
         _nodePosOut <= nodePosOut;
         _nodeVelOut <= nodeVelOut;
         _nodeCellOut <= nodeCellOut;

@@ -2,10 +2,9 @@
   "schema": "xilinx.com:schema:json_instance:1.0",
   "ip_inst": {
     "xci_name": "BlockRAM",
-    "cell_name": "inst_MD_wrapper/sim/genblk1[0].PBRAM/BlockRAM",
     "component_reference": "xilinx.com:ip:blk_mem_gen:8.4",
     "ip_revision": "6",
-    "gen_directory": "../../../../../../../../../users/fadik/appdata/roaming/xilinx/ip_repo/new/tmp_edit_project.gen/sources_1/ip/BlockRAM",
+    "gen_directory": "./",
     "parameters": {
       "component_parameters": {
         "Component_Name": [ { "value": "BlockRAM", "resolve_type": "user", "usage": "all" } ],
@@ -175,11 +174,11 @@
         "IPCONTEXT": [ { "value": "IP_Flow" } ],
         "IPREVISION": [ { "value": "6" } ],
         "MANAGED": [ { "value": "TRUE" } ],
-        "OUTPUTDIR": [ { "value": "../../../../../../../../../users/fadik/appdata/roaming/xilinx/ip_repo/new/tmp_edit_project.gen/sources_1/ip/BlockRAM" } ],
+        "OUTPUTDIR": [ { "value": "./" } ],
         "SELECTEDSIMMODEL": [ { "value": "" } ],
         "SHAREDDIR": [ { "value": "." } ],
         "SWVERSION": [ { "value": "2023.1" } ],
-        "SYNTHESISFLOW": [ { "value": "GLOBAL" } ]
+        "SYNTHESISFLOW": [ { "value": "OUT_OF_CONTEXT" } ]
       }
     },
     "boundary": {
