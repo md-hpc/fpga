@@ -25,9 +25,8 @@ module fp32_mul (
     input wire [31:0] b,  // FP32 input B
     output  [31:0] o   // FP32 output (A * B)
 );
-wire out_valid;
 
- fp_mult mult(.s_axis_a_tdata(a),.s_axis_a_tvalid(1),.s_axis_b_tvalid(1),.s_axis_b_tdata(b),.m_axis_result_tdata(out_valid));
+ fp_mult mult(.s_axis_a_tdata(a),.s_axis_a_tvalid(1),.s_axis_b_tvalid(1),.s_axis_b_tdata(b),.m_axis_result_tdata(o));
 
     
 endmodule
