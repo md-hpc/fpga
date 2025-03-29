@@ -44,7 +44,11 @@ module phase_1 #(parameter N_CELL = 14)(
     //wire [31:0] p_ring_addrs[N_CELL-1:0];
     
     wire [113:0]p_ring_reference[N_CELL-1:0];
-    wire [(114)*14 - 1:0]p_ring_neighbors[N_CELL-1:0];
+    
+    //output  neighbor,
+    //output neighbor_cell,
+    wire [(114)-1:0]p_ring_neighbor[N_CELL-1:0];
+    wire [(114)- 1:0]p_ring_neighbor_cell[N_CELL-1:0];
     
     wire [113:0] pipeline_reference_out [N_CELL-1:0];
     wire [113:0] pipeline_neighbor_out [N_CELL-1:0];
@@ -84,9 +88,9 @@ module phase_1 #(parameter N_CELL = 14)(
     genvar i;
     generate
         for(i = 0; i < N_CELL; i=i+1) begin
-         ComputePipeline cp(.clk(clk),.fast_clk(fast_clk),.reset(reset),.reference(p_ring_reference[i]),.neighbors(p_ring_neighbors[i]),.neighbor_out(pipeline_neighbor_out[i]),.reference_out(pipeline_reference_out[i]),.done(pipeline_done[i]),.read_controller_done(prc_done));
+         ComputePipeline cp(.clk(clk),.fast_clk(fast_clk),.reset(reset),.reference(p_ring_reference[i]),.neighbor_cell(p_ring_neighbor_cell[i]),.neighbor(p_ring_neighbor[i]),.neighbor_out(pipeline_neighbor_out[i]),.reference_out(pipeline_reference_out[i]),.done(pipeline_done[i]),.read_controller_done(prc_done));
          VelocityRingNode vn(.clk(fast_clk),.reset(reset),.Cell(i),.neighbor_cell(pipeline_neighbor_out[i][106+:8]),.neighbor(pipeline_neighbor_out[i][105:0]),.reference(pipeline_reference_out[i][105:0]),.reference_cell(pipeline_reference_out[i][106+:8]),.next(v_ring_next[i][105:0]),.next_cell(v_ring_next[i][106+:8]),.prev(v_ring_next[(i+N_CELL-1)%N_CELL][105:0]),.prev_cell(v_ring_next[(i+N_CELL-1)%N_CELL][106+:8]),.fragment_out(fragment_out[i]),.rempty(v_rempty[i]),.addr(oaddr[32*i+:32]),.v_iaddr(v_iaddr[32*i+:32]));
-         PositionRingNode pn(.clk(clk),.reset(reset),.Cell(i),.dispatch(dispatch),.next(p_ring_next[i][105:0]),.next_cell(p_ring_next[i][106+:8]),.prev(p_ring_next[(i+N_CELL-1)%N_CELL][105:0]),.prev_cell(p_ring_next[(i+N_CELL-1)%N_CELL][106+:8]),.reference(p_ring_reference[i]),.neighbors(p_ring_neighbors[i]),.double_buffer(CTL_DOUBLE_BUFFER),.done_batch(done_batch[i]),.done_all(done_all[i]),.in_flight(in_flight[i]),.bram_in(r_p_caches[i*97+:97]),.addr(iaddr[32*i+:32]));
+         PositionRingNode pn(.clk(clk),.fast_clk(fast_clk),.reset(reset),.Cell(i),.dispatch(dispatch),.next(p_ring_next[i][105:0]),.next_cell(p_ring_next[i][106+:8]),.prev(p_ring_next[(i+N_CELL-1)%N_CELL][105:0]),.prev_cell(p_ring_next[(i+N_CELL-1)%N_CELL][106+:8]),.reference(p_ring_reference[i]),.neighbor(p_ring_neighbor[i]),.neighbor_cell(p_ring_neighbor_cell[i]),.double_buffer(CTL_DOUBLE_BUFFER),.done_batch(done_batch[i]),.done_all(done_all[i]),.in_flight(in_flight[i]),.bram_in(r_p_caches[i*97+:97]),.addr(iaddr[32*i+:32]));
          Adder adder(.clk(clk),.reset(reset),.a(fragment_out[i]),.b(r_v_caches[97*i+:97]),.en(wr_en[i]),.o(w_v_caches[97*i+:97]));
          assign done_acc[i+1] = done_acc[i] & pipeline_done[i];
          assign done_acc[i+N_CELL+1] = done_acc[i+N_CELL] & v_rempty[i];

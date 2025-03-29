@@ -26,7 +26,8 @@ module ComputePipeline(
     input fast_clk,
     input reset,
     input [113:0] reference,
-    input[(114)*14 - 1:0] neighbors,
+    input [105:0] neighbor,
+    input [7:0] neighbor_cell,
     output done,
     output [113:0] neighbor_out,
     output [113:0] reference_out
@@ -37,7 +38,6 @@ module ComputePipeline(
     integer iter;
     genvar i;
     reg [3:0] counter;
-    wire [3:0] indexor;
     wire  [226:0] filter_bank_out;
     wire  [226:0] pair_queue_out;
     wire  [226:0] force_pipeline_out;
@@ -50,11 +50,10 @@ module ComputePipeline(
     assign done = _done;
     reg null_pf;
     wire and_pf;
-    assign indexor = counter <14 ? counter: 0;
     //assign and_acc_pf[0] = filter_bank_out[192];
     assign and_pf = null_pf & filter_bank_out[226];
     
-    ParticleFilter pf(.fast_clk(fast_clk),.reset(reset),.neighbor({neighbor_buff[indexor*114+105+:9],neighbor_buff[indexor*114+:97]}),.neighbor_cell(neighbor_buff[(indexor*114 + 97)+:8]),.reference({_reference_buff[113:105],_reference_buff[96:0]}),.reference_cell(_reference_buff[104:97]),.o(filter_bank_out));
+    ParticleFilter pf(.fast_clk(fast_clk),.reset(reset),.neighbor(neighbor),.neighbor_cell(neighbor_cell),.reference({_reference_buff[113:105],_reference_buff[96:0]}),.reference_cell(_reference_buff[104:97]),.o(filter_bank_out));
     /*
     generate
         for(i = 0; i < 14; i=i+1) begin
@@ -78,19 +77,11 @@ module ComputePipeline(
             counter <= 4'd15;
             null_pf <= 1;
             _reference_buff <= reference;
-            for(iter = 0; iter < 14; iter = iter + 1) begin
-                neighbor_buff[iter*114+:114] = neighbors[iter*114+:114];
-            end
         end else begin
             if(counter == 15) begin
                 counter <= 0;
                 null_pf <= 1;
                 _reference_buff <= reference;
-                for(iter = 0; iter < 14; iter = iter + 1) begin
-                    if(neighbors[iter*114+96] != 1) begin
-                        neighbor_buff[iter*114+:114] = neighbors[iter*114+:114];
-                    end
-                end
             end else begin
                 null_pf <= and_pf;
                 counter <= counter + 1;

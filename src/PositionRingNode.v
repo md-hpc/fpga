@@ -22,6 +22,7 @@
 
 module PositionRingNode #(parameter NSIZE=14, parameter DBSIZE=256)(
     input  clk,
+    input fast_clk,
     input  reset,
     input  double_buffer,
     input [1:0] dispatch,
@@ -31,7 +32,8 @@ module PositionRingNode #(parameter NSIZE=14, parameter DBSIZE=256)(
     input [31:0] Cell,
     output reg [105:0] next,
     output reg [7:0] next_cell,
-    output reg [(114*NSIZE)-1:0] neighbors,
+    output  neighbor,
+    output neighbor_cell,
     output reg [113:0] reference,
     output  [31:0] addr,
     output  done_batch,
@@ -40,15 +42,20 @@ module PositionRingNode #(parameter NSIZE=14, parameter DBSIZE=256)(
 );
     integer iter;
     reg [113:0] neighbor_buffer [NSIZE-1:0];
+    reg [(114)*NSIZE - 1:0] neighbors;
+    reg [(114)*NSIZE - 1:0] neighbor_buff;
     reg [7:0] i;
     reg [1:0] ptype;
     reg done_batch_reg, done_all_reg;
     reg [31:0] addr_n, addr_r;
-
+    reg [4:0] counter;
     wire [104:0] p;
     
     wire n3l_o;
-    
+    wire [3:0] indexor;
+    assign indexor = counter <14 ? counter: 0;
+    assign neighbor = {neighbor_buff[indexor*114+105+:9],neighbor_buff[indexor*114+:97]};
+    assign neighbor_cell = neighbor_buff[(indexor*114 + 97)+:8];
     assign p = (bram_in[96] == 1'b1 || reset)? {{8{1'b0}},1'b1,{96{1'b0}}}: {Cell[0+:8],bram_in};
                        
     wire [31:0] possible_addr = reset ?  0  :
@@ -179,5 +186,25 @@ module PositionRingNode #(parameter NSIZE=14, parameter DBSIZE=256)(
 
     assign done_batch = done_batch_reg;
     assign done_all = done_all_reg;
-
+    always @(posedge fast_clk) begin
+        if(reset) begin
+            counter <= 4'd15;
+            for(iter = 0; iter < 14; iter = iter + 1) begin
+                neighbor_buff[iter*114+:114] = neighbors[iter*114+:114];
+            end
+        end else begin
+            if(counter == 15) begin
+                counter <= 0;
+                for(iter = 0; iter < 14; iter = iter + 1) begin
+                    if(neighbors[iter*114+96] != 1) begin
+                        neighbor_buff[iter*114+:114] = neighbors[iter*114+:114];
+                    end
+                end
+            end else begin
+                counter <= counter + 1;
+            end
+            
+            
+        end
+    end
 endmodule
