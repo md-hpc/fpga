@@ -45,7 +45,6 @@ module ComputePipeline(
     wire [113:0] _reference;
     reg [113:0] _reference_buff;
     
-    reg [(114)*14 - 1:0] neighbor_buff;
     wire _done;
     assign done = _done;
     reg null_pf;

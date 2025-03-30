@@ -20,7 +20,7 @@
 //////////////////////////////////////////////////////////////////////////////////
 
 
-module simulator#(parameter N_CELL = 14, parameter N_PARTICLES = 300)(
+module simulator#(parameter N_CELL = 27, parameter N_PARTICLES = 300)(
 //input clk,
 input fast_clk,
 input reset,

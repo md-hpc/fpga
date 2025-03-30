@@ -20,7 +20,7 @@
 //////////////////////////////////////////////////////////////////////////////////
 
 
-module phase_1 #(parameter N_CELL = 14)(
+module phase_1 #(parameter N_CELL = 27)(
     input clk,
     input fast_clk,
     input reset,
