@@ -126,16 +126,13 @@ module CellIndex #(parameter L = 32'h40f00000, parameter CUTOFF = 32'h40200000, 
     fp32_floor fp_floor_b(.a(div_b[0+:32]),.o(floor_b));
     fp32_floor fp_floor_c(.a(div_c[0+:32]),.o(floor_c));
     
- floating_point_1 inta (.s_axis_a_tdata(modd_a[0+:32]),.s_axis_a_tvalid(1),.m_axis_result_tdata(_probe_a));
+ floating_point_1 inta (.s_axis_a_tdata(floor_a[0+:32]),.s_axis_a_tvalid(1),.m_axis_result_tdata(_probe_a));
 
-floating_point_1 intb (.s_axis_a_tdata(modd_b[0+:32]),.s_axis_a_tvalid(1),.m_axis_result_tdata(_probe_b));
+floating_point_1 intb (.s_axis_a_tdata(floor_b[0+:32]),.s_axis_a_tvalid(1),.m_axis_result_tdata(_probe_b));
 
-floating_point_1 intc (.s_axis_a_tdata(modd_c[0+:32]),.s_axis_a_tvalid(1),.m_axis_result_tdata(_probe_c));
+floating_point_1 intc (.s_axis_a_tdata(floor_c[0+:32]),.s_axis_a_tvalid(1),.m_axis_result_tdata(_probe_c));
     
-    assign probe_a = (modd_a[0+:32] == {32{1'b0}})? 0 : _probe_a - 1;
-    assign probe_b = (modd_b[0+:32] == {32{1'b0}})? 0 : _probe_b - 1;
-    assign probe_c = (modd_c[0+:32] == {32{1'b0}})? 0 : _probe_c - 1;
-    
+
     assign probe_a =  _probe_a ;
     assign probe_b = _probe_b;
     assign probe_c = _probe_c;
