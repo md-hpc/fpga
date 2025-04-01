@@ -48,7 +48,7 @@ module phase_1 #(parameter N_CELL = 27)(
     //output  neighbor,
     //output neighbor_cell,
     wire [(114)-1:0]p_ring_neighbor[N_CELL-1:0];
-    wire [(114)- 1:0]p_ring_neighbor_cell[N_CELL-1:0];
+    wire [(8)- 1:0]p_ring_neighbor_cell[N_CELL-1:0];
     
     wire [113:0] pipeline_reference_out [N_CELL-1:0];
     wire [113:0] pipeline_neighbor_out [N_CELL-1:0];

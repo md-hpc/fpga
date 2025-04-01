@@ -118,7 +118,14 @@ module CellIndex #(parameter L = 32'h40f00000, parameter CUTOFF = 32'h40200000, 
     wire [31:0] _probe_c;
     wire [31:0] probe_c;
     
-
+ wire [31:0] floor_a;
+    wire [31:0] floor_b;
+    wire [31:0] floor_c;
+    
+    fp32_floor fp_floor_a(.a(div_a[0+:32]),.o(floor_a));
+    fp32_floor fp_floor_b(.a(div_b[0+:32]),.o(floor_b));
+    fp32_floor fp_floor_c(.a(div_c[0+:32]),.o(floor_c));
+    
  floating_point_1 inta (.s_axis_a_tdata(modd_a[0+:32]),.s_axis_a_tvalid(1),.m_axis_result_tdata(_probe_a));
 
 floating_point_1 intb (.s_axis_a_tdata(modd_b[0+:32]),.s_axis_a_tvalid(1),.m_axis_result_tdata(_probe_b));
@@ -129,39 +136,14 @@ floating_point_1 intc (.s_axis_a_tdata(modd_c[0+:32]),.s_axis_a_tvalid(1),.m_axi
     assign probe_b = (modd_b[0+:32] == {32{1'b0}})? 0 : _probe_b - 1;
     assign probe_c = (modd_c[0+:32] == {32{1'b0}})? 0 : _probe_c - 1;
     
-    
-    fp32_mul mul_c (
-        .a(probe_a),
-        .b(UNIVERSE_SIZE),
-        .o(mult_c[0+:32])
-    );
+    assign probe_a =  _probe_a ;
+    assign probe_b = _probe_b;
+    assign probe_c = _probe_c;
     
     
-    fp32_mul mull_c (
-        .a(mult_c[0+:32]),
-        .b(UNIVERSE_SIZE),
-        .o(multt_c[0+:32])
-    );
-    
-    
-    
-    
-    fp32_add adder_xy (
-        .a(probe_b),
-        .b(mult_b[0+:32]),
-        .o(add_xy[0+:32]),
-        .sub(0)
-    );
-    fp32_add adder_xyz (
-        .a(probe_c),
-        .b(multt_c[0+:32]),
-        .o(temp_out[0+:32]),
-        .sub(0)
-    );
     
     assign cIndex[0+:32] = probe_a%3 + (probe_b%3)*3+ (probe_c%3)*9;
     assign cIndex[32] = pi[96] | vi[96];
-    assign shifted_mantissa = {1'b1, temp_out[22:0]} << (temp_out[30:23] - 127);
     //assign cIndex = {{24{1'b0}},shifted_mantissa[30:23]};
     assign newp[0+:32] = mod_a[0+:32]; 
     assign newp[32+:32] = mod_b[0+:32];

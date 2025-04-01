@@ -28,7 +28,7 @@ module fp32_add (
 );
 wire out_valid;
 
-addsub add (.s_axis_a_tdata(a),.s_axis_a_tvalid(1),.s_axis_b_tvalid(1),.s_axis_b_tdata({b[31]^sub,b[0+:31]}),.m_axis_result_tdata(out_valid));
+addsub add (.s_axis_a_tdata(a),.s_axis_a_tvalid(1),.s_axis_b_tvalid(1),.s_axis_b_tdata({b[31]^sub,b[0+:31]}),.m_axis_result_tdata(o),.m_axis_result_tvalid(out_valid));
 
 
 endmodule
