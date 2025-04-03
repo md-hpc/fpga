@@ -39,9 +39,9 @@ module ParticleFilter(
     reg [226:0] im_o;
     assign o = im_o;
     
-    n3l n3l_module(reference[0+:96],neighbor[0+:96],n3l_w);
+    n3l n3l_module(reference[0+:96],neighbor[0+:96],n3l_w,mod);
     
-    modr m(reference[0+:96],neighbor[0+:96],mod);
+    //modr m(reference[0+:96],neighbor[0+:96],mod);
     Norm norm(mod,r);
     
     

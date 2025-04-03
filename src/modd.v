@@ -27,7 +27,8 @@ module modd(
     output [31:0] o
     );
     //opts = [(b-M)-a, b-a, (b+M)-a]
-    
+    //which is equal to
+    //opts = [(b-a)-M, (b-a), (b-a)+M]
     wire [31:0] opta;
     wire [31:0] opta_im;
     wire [31:0] optb;
@@ -36,13 +37,11 @@ module modd(
     
     wire [31:0] comp_im;
     
-    fp32_sub sub_ima(b,M,opta_im);
-    fp32_sub sub_a(opta_im,a,opta);
-    
     fp32_sub sub_b(b,a,optb);
     
-    fp32_add add_imc(b,M,1'b0,optc_im);
-    fp32_sub sub_c(optc_im,a,optc);
+    fp32_sub sub_ima(optb,M,opta);
+    
+    fp32_add add_imc(optb,M,1'b0,optc);
     
     fp32_abs_comp comp_a(opta,optb,comp_im);
     fp32_abs_comp comp_b(comp_im,optc,o);

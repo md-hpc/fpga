@@ -53,17 +53,20 @@ module PositionRingNode #(parameter NSIZE=14, parameter DBSIZE=256)(
     
     wire n3l_o;
     wire [3:0] indexor;
+    
+    wire[8:0] offset_addr = double_buffer? DBSIZE : 0;
+    
     assign indexor = counter <14 ? counter: 0;
     assign neighbor = {neighbor_buff[indexor*114+105+:9],neighbor_buff[indexor*114+:97]};
     assign neighbor_cell = neighbor_buff[(indexor*114 + 97)+:8];
     assign p = (bram_in[96] == 1'b1 || reset)? {{8{1'b0}},1'b1,{96{1'b0}}}: {Cell[0+:8],bram_in};
                        
     wire [31:0] possible_addr = reset ?  0  :
-                (dispatch ==  2'b01 && done_all_reg !=  1'b1 && prev[96] == 1'b1)? addr_n + double_buffer*DBSIZE :
+                (dispatch ==  2'b01 && done_all_reg !=  1'b1 && prev[96] == 1'b1)? addr_n + offset_addr :
                 (dispatch ==  2'b01 &&done_all_reg ==  1'b1 && prev[96] == 1'b1)? 0 : 
-                (ptype == 1 && prev[96] == 1'b1) ? addr_r + double_buffer*DBSIZE : // This didn't have the + double_buffer * DBSIZE!
-                (ptype == 2 && bram_in[96] == 1'b1) ?  addr_r + double_buffer*DBSIZE :
-                (ptype == 2 && bram_in[96] !=  1'b1) ? addr_r + 1  + double_buffer*DBSIZE : 0;
+                (ptype == 1 && prev[96] == 1'b1) ? addr_r + offset_addr : // This didn't have the + double_buffer * DBSIZE!
+                (ptype == 2 && bram_in[96] == 1'b1) ?  addr_r + offset_addr :
+                (ptype == 2 && bram_in[96] !=  1'b1) ? addr_r + 1  + offset_addr : 0;
     assign addr = possible_addr;            
     //(reset == 0 && dispatch == 2'b01 )?:{32{1'b0}};                   
                        
@@ -137,9 +140,9 @@ module PositionRingNode #(parameter NSIZE=14, parameter DBSIZE=256)(
                        in_flight <= 0;
                    end else begin
                        addr_n <= addr_n + 1;
-                       neighbor_buffer[i] <= {addr_n[0+:9] + double_buffer*DBSIZE,Cell[0+:8],bram_in};
+                       neighbor_buffer[i] <= {addr_n[0+:9] + offset_addr,Cell[0+:8],bram_in};
                        i <= i + 1;
-                       next <= {addr_n + double_buffer*DBSIZE,bram_in};
+                       next <= {addr_n + offset_addr,bram_in};
                        in_flight <= 1;
                        next_cell <= Cell[0+:8];
                    end
@@ -153,7 +156,7 @@ module PositionRingNode #(parameter NSIZE=14, parameter DBSIZE=256)(
                    done_batch_reg <= 1;
                    //addr <= addr_r  + double_buffer*DBSIZE;
                end else begin
-                   reference <= {addr_r[0+:9] + double_buffer*DBSIZE,Cell[0+:8],p[0+:97]};
+                   reference <= {addr_r[0+:9] + offset_addr,Cell[0+:8],p[0+:97]};
                    addr_r <= addr_r + 1;
                    //addr <= addr_r + 1  + double_buffer*DBSIZE;
                end
