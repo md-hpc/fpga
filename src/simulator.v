@@ -19,8 +19,8 @@
 // 
 //////////////////////////////////////////////////////////////////////////////////
 
-
-module simulator#(parameter N_CELL = 27, parameter N_PARTICLES = 300)(
+(* keep_hierarchy = "yes" *)
+module simulator#(parameter N_CELL = 8, parameter N_PARTICLES = 300)(
 //input clk,
 input fast_clk,
 input reset,
@@ -34,9 +34,9 @@ output [N_CELL-1:0] en
 );
 
 
-reg clk;
+ (* keep = "true" *) reg clk;
 reg [15:0] counter;
-wire double_buffer;
+ (* keep = "true" *) wire double_buffer;
 
 reg phase1_done;
 reg phase3_done;
@@ -86,8 +86,9 @@ reg [7:0] phase1_delay_counter;
 
 assign out_p = p3_p_dina;
 wire phase1_actualy_done = phase1_delay_counter> 98 && phase1_done ? 1'b1 : 1'b0;
+(* keep_hierarchy = "yes" *)
 ControlUnit CU(.clk(clk),.reset(reset),.phase1_done(phase1_actualy_done),.phase3_done(phase3_done),.mem_set(mem_set),.double_buffer(double_buffer),.phase3_ready(phase3_ready),.phase1_ready(phase1_ready));
- 
+(* keep_hierarchy = "yes" *)
 phase_1 phase1(.clk(clk),.fast_clk(fast_clk),.reset(reset | (~mem_set)),.CTL_DONE(phase1_done_w),.CTL_DOUBLE_BUFFER(double_buffer),.CTL_READY(phase1_ready),.oaddr(p1_addra),.iaddr(p1_addrb),.r_p_caches(p1_p_doutb),.r_v_caches(p1_v_doutb),.w_v_caches(p1_v_dina),.wr_en(p1_wea),.v_iaddr(p1_v_iaddr));
 phase_3 phase3(.clk(clk),.reset(reset | (~mem_set)),.CTL_DONE(phase3_done_w_out),.CTL_DOUBLE_BUFFER(double_buffer),.CTL_READY(phase3_ready),.wr_en(p3_wea),.oaddr(p3_addrb),.iaddr(p3_addra),.r_p_caches(p3_p_doutb),.w_p_caches(p3_p_dina),.r_v_caches(p3_v_doutb),.w_v_caches(p3_v_dina));
 
@@ -96,7 +97,7 @@ reg [9:0] init_counter;
 
 
 assign phase3_done_w_acc[0] = phase3_done_w_out[0];
-assign phase3_done_w = phase3_done_w_acc[27];
+assign phase3_done_w = phase3_done_w_acc[N_CELL];
 
 genvar i;
 generate

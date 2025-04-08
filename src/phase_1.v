@@ -18,9 +18,8 @@
 // Additional Comments:
 // 
 //////////////////////////////////////////////////////////////////////////////////
-
-
-module phase_1 #(parameter N_CELL = 27)(
+(* keep_hierarchy = "yes" *)
+module phase_1 #(parameter N_CELL = 8)(
     input clk,
     input fast_clk,
     input reset,
@@ -39,25 +38,25 @@ module phase_1 #(parameter N_CELL = 27)(
     
     wire prc_done;
     
-    reg  [113:0]p_ring_regs[N_CELL-1:0];
-    wire  [113:0]p_ring_next[N_CELL-1:0];
+      (* keep = "true" *)reg  [113:0]p_ring_regs[N_CELL-1:0];
+      (* keep = "true" *)wire  [113:0]p_ring_next[N_CELL-1:0];
     //wire [31:0] p_ring_addrs[N_CELL-1:0];
     
-    wire [113:0]p_ring_reference[N_CELL-1:0];
+      (* keep = "true" *)wire [113:0]p_ring_reference[N_CELL-1:0];
     
     //output  neighbor,
     //output neighbor_cell,
-    wire [(114)-1:0]p_ring_neighbor[N_CELL-1:0];
-    wire [(8)- 1:0]p_ring_neighbor_cell[N_CELL-1:0];
+     (* keep = "true" *)wire [(114)-1:0]p_ring_neighbor[N_CELL-1:0];
+     (* keep = "true" *)wire [(8)- 1:0]p_ring_neighbor_cell[N_CELL-1:0];
     
-    wire [113:0] pipeline_reference_out [N_CELL-1:0];
-    wire [113:0] pipeline_neighbor_out [N_CELL-1:0];
-    wire [N_CELL-1:0] pipeline_done;
+     (* keep = "true" *)wire [113:0] pipeline_reference_out [N_CELL-1:0];
+     (* keep = "true" *)wire [113:0] pipeline_neighbor_out [N_CELL-1:0];
+    (* keep = "true" *) wire [N_CELL-1:0] pipeline_done;
     //reg [13:0] p_ring_addrs;
     
-    reg [137:0] v_ring_regs [N_CELL-1:0];
-    wire  [113:0]v_ring_next[N_CELL-1:0];
-    wire  [32*3:0]fragment_out[N_CELL-1:0];
+     (* keep = "true" *)reg [137:0] v_ring_regs [N_CELL-1:0];
+   (* keep = "true" *) wire  [113:0]v_ring_next[N_CELL-1:0];
+     (* keep = "true" *)wire  [32*3:0]fragment_out[N_CELL-1:0];
     //wire  [32:0] v_ring_addr[N_CELL-1:0];
     wire [N_CELL-1:0]v_rempty;
     
@@ -88,6 +87,7 @@ module phase_1 #(parameter N_CELL = 27)(
     genvar i;
     generate
         for(i = 0; i < N_CELL; i=i+1) begin
+        (* keep_hierarchy = "yes" *)
          ComputePipeline cp(.clk(clk),.fast_clk(fast_clk),.reset(reset),.reference(p_ring_reference[i]),.neighbor_cell(p_ring_neighbor_cell[i]),.neighbor(p_ring_neighbor[i]),.neighbor_out(pipeline_neighbor_out[i]),.reference_out(pipeline_reference_out[i]),.done(pipeline_done[i]),.read_controller_done(prc_done));
          VelocityRingNode vn(.clk(fast_clk),.reset(reset),.Cell(i),.neighbor_cell(pipeline_neighbor_out[i][106+:8]),.neighbor(pipeline_neighbor_out[i][105:0]),.reference(pipeline_reference_out[i][105:0]),.reference_cell(pipeline_reference_out[i][106+:8]),.next(v_ring_next[i][105:0]),.next_cell(v_ring_next[i][106+:8]),.prev(v_ring_next[(i+N_CELL-1)%N_CELL][105:0]),.prev_cell(v_ring_next[(i+N_CELL-1)%N_CELL][106+:8]),.fragment_out(fragment_out[i]),.rempty(v_rempty[i]),.addr(oaddr[32*i+:32]),.v_iaddr(v_iaddr[32*i+:32]));
          PositionRingNode pn(.clk(clk),.fast_clk(fast_clk),.reset(reset),.Cell(i),.dispatch(dispatch),.next(p_ring_next[i][105:0]),.next_cell(p_ring_next[i][106+:8]),.prev(p_ring_next[(i+N_CELL-1)%N_CELL][105:0]),.prev_cell(p_ring_next[(i+N_CELL-1)%N_CELL][106+:8]),.reference(p_ring_reference[i]),.neighbor(p_ring_neighbor[i]),.neighbor_cell(p_ring_neighbor_cell[i]),.double_buffer(CTL_DOUBLE_BUFFER),.done_batch(done_batch[i]),.done_all(done_all[i]),.in_flight(in_flight[i]),.bram_in(r_p_caches[i*97+:97]),.addr(iaddr[32*i+:32]));
@@ -103,7 +103,7 @@ module phase_1 #(parameter N_CELL = 27)(
     endgenerate
     PositionReadController prc(.ready(CTL_READY),.clk(clk),.reset(reset),.finished_batch(finished_batch),.finished_all(finished_all),.in_flight(inflight),.dispatch(dispatch),.done(prc_done));
     
-    always @ (posedge clk, posedge reset) begin
+    always @ (posedge clk) begin
     if(reset) begin
             for(iter = 0; iter<N_CELL; iter = iter + 1) begin
             p_ring_regs[iter] <= {114{1'b1}};

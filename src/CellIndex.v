@@ -20,7 +20,7 @@
 //////////////////////////////////////////////////////////////////////////////////
 
 // CUTOFF is 2.5
-module CellIndex #(parameter L = 32'h40f00000, parameter L_INV = 32'h3e088889,parameter CUTOFF = 32'h3ecccccd, parameter UNIVERSE_SIZE = 32'h40400000, parameter UNIVERSE_SIZE_INV = 32'h3eaaaaab, parameter DT = 32'h33d6bf95)(
+module CellIndex #(parameter L = 32'h40f00000, parameter L_INV = 32'h3e088889,parameter CUTOFF = 32'h3ecccccd, parameter UNIVERSE_SIZE = 32'h40000000, parameter UNIVERSE_SIZE_INV = 32'h3f000000, parameter DT = 32'h33d6bf95)(
     input wire [(32*3):0] vi,
     input wire [(32*3):0] pi,
     output [32:0] cIndex,
@@ -78,8 +78,7 @@ module CellIndex #(parameter L = 32'h40f00000, parameter L_INV = 32'h3e088889,pa
     );
     fp32_mod_const modulo_a(.a(add_a[0+:32]),.b(L),.b_rec(L_INV),.o(mod_a[0+:32]));
     fp32_mul division_a(.a(mod_a[0+:32]),.b(CUTOFF),.o(div_a[0+:32]));
-    fp32_mod_const moddulo_a(.a(div_a[0+:32]),.b(UNIVERSE_SIZE),.b_rec(UNIVERSE_SIZE_INV),.o(modd_a[0+:32]));
-    
+    //(pi + vi * dT)
     
     // y axis
     fp32_add adder_b (
@@ -90,12 +89,7 @@ module CellIndex #(parameter L = 32'h40f00000, parameter L_INV = 32'h3e088889,pa
     );
     fp32_mod_const modulo_b(.a(add_b[0+:32]),.b(L),.b_rec(L_INV),.o(mod_b[0+:32]));
     fp32_mul division_b(.a(mod_b[0+:32]),.b(CUTOFF),.o(div_b[0+:32]));
-    fp32_mod_const moddulo_b(.a(div_b[0+:32]),.b(UNIVERSE_SIZE),.b_rec(UNIVERSE_SIZE_INV),.o(modd_b[0+:32]));
-    fp32_mul mul_b (
-        .a(modd_b[0+:32]),
-        .b(UNIVERSE_SIZE),
-        .o(mult_b[0+:32])
-    );
+    
     // z axis
     fp32_add adder_c (
         .a(pi[64+:32]),
@@ -105,7 +99,6 @@ module CellIndex #(parameter L = 32'h40f00000, parameter L_INV = 32'h3e088889,pa
     );
     fp32_mod_const modulo_c(.a(add_c[0+:32]),.b(L),.b_rec(L_INV),.o(mod_c[0+:32]));
     fp32_mul division_c(.a(mod_c[0+:32]),.b(CUTOFF),.o(div_c[0+:32]));
-    fp32_mod_const moddulo_c(.a(div_c[0+:32]),.b(UNIVERSE_SIZE),.b_rec(UNIVERSE_SIZE_INV),.o(modd_c[0+:32]));
     
     
     wire [31:0] _probe_a;
@@ -128,7 +121,7 @@ floating_point_1 intc (.s_axis_a_tdata(floor_c[0+:32]),.s_axis_a_tvalid(1),.m_ax
     
     
     
-    assign cIndex[0+:32] = _probe_a%3 + (_probe_b%3)*3+ (_probe_c%3)*9;
+    assign cIndex[0+:32] = _probe_a%2 + (_probe_b%2)*2+ (_probe_c%2)*2;
     assign cIndex[32] = pi[96] | vi[96];
     //assign cIndex = {{24{1'b0}},shifted_mantissa[30:23]};
     assign newp[0+:32] = mod_a[0+:32]; 

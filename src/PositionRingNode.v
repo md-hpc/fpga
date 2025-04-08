@@ -20,7 +20,7 @@
 //////////////////////////////////////////////////////////////////////////////////
 
 
-module PositionRingNode #(parameter NSIZE=14, parameter DBSIZE=256)(
+module PositionRingNode #(parameter NSIZE=8, parameter DBSIZE=256)(
     input  clk,
     input fast_clk,
     input  reset,
@@ -56,7 +56,7 @@ module PositionRingNode #(parameter NSIZE=14, parameter DBSIZE=256)(
     
     wire[8:0] offset_addr = double_buffer? DBSIZE : 0;
     
-    assign indexor = counter <14 ? counter: 0;
+    assign indexor = counter <NSIZE ? counter: 0;
     assign neighbor = {neighbor_buff[indexor*114+105+:9],neighbor_buff[indexor*114+:97]};
     assign neighbor_cell = neighbor_buff[(indexor*114 + 97)+:8];
     assign p = (bram_in[96] == 1'b1 || reset)? {{8{1'b0}},1'b1,{96{1'b0}}}: {Cell[0+:8],bram_in};

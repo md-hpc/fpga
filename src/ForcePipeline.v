@@ -24,7 +24,7 @@ module ForcePipeline(
     input clk,
     input reset,
     input [226:0] in, //two velocities are in the input:
-    input done,
+    output done,
     output reg [226:0] out
     //output reg [96:0] reference,
     //output reg [96:0] neighbor

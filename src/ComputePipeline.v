@@ -18,8 +18,7 @@
 // Additional Comments:
 // 
 //////////////////////////////////////////////////////////////////////////////////
-
-
+(* keep_hierarchy = "yes" *)
 module ComputePipeline(
     input read_controller_done,
     input clk,
@@ -51,7 +50,7 @@ module ComputePipeline(
     wire and_pf;
     //assign and_acc_pf[0] = filter_bank_out[192];
     assign and_pf = null_pf & filter_bank_out[226];
-    
+    (* keep_hierarchy = "yes" *)
     ParticleFilter pf(.fast_clk(fast_clk),.reset(reset),.neighbor(neighbor),.neighbor_cell(neighbor_cell),.reference({_reference_buff[113:105],_reference_buff[96:0]}),.reference_cell(_reference_buff[104:97]),.o(filter_bank_out));
     /*
     generate

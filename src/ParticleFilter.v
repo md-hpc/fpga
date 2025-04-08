@@ -19,7 +19,7 @@
 // 
 //////////////////////////////////////////////////////////////////////////////////
 
-
+(* keep_hierarchy = "yes" *)
 module ParticleFilter(
     input fast_clk,
     input reset,
@@ -30,13 +30,13 @@ module ParticleFilter(
     output [226:0] o
     );
     
-    wire n3l_w;
-    wire[95:0] mod;
-    wire[31:0] r;
+     (* keep = "true" *) wire n3l_w;
+    (* keep = "true" *)  wire[95:0] mod;
+     (* keep = "true" *) wire[31:0] r;
     
-    wire less;
+     (* keep = "true" *) wire less;
     
-    reg [226:0] im_o;
+     (* keep = "true" *) reg [226:0] im_o;
     assign o = im_o;
     
     n3l n3l_module(reference[0+:96],neighbor[0+:96],n3l_w,mod);

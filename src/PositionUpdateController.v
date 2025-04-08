@@ -53,7 +53,7 @@ module PositionUpdateController #(parameter DBSIZE = 256)(
         end else  if(!ready) begin
             raddr <= (double_buffer == 1) ? DBSIZE : 0;
             _raddr <= (double_buffer == 1) ? DBSIZE : 0;
-            _overwrite_addr[32] = 0;
+            _overwrite_addr[32] <= 0;
             _overwrite_addr[0+:32] <= (double_buffer == 1) ? 0 : DBSIZE;
             done <= 0;
             //oaddr <= {32{1'b1}};
