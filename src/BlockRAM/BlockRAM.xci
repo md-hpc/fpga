@@ -4,7 +4,7 @@
     "xci_name": "BlockRAM",
     "component_reference": "xilinx.com:ip:blk_mem_gen:8.4",
     "ip_revision": "6",
-    "gen_directory": "./",
+    "gen_directory": "../../../../RTL_MD.gen/sources_1/ip/BlockRAM",
     "parameters": {
       "component_parameters": {
         "Component_Name": [ { "value": "BlockRAM", "resolve_type": "user", "usage": "all" } ],
@@ -174,7 +174,7 @@
         "IPCONTEXT": [ { "value": "IP_Flow" } ],
         "IPREVISION": [ { "value": "6" } ],
         "MANAGED": [ { "value": "TRUE" } ],
-        "OUTPUTDIR": [ { "value": "./" } ],
+        "OUTPUTDIR": [ { "value": "../../../../RTL_MD.gen/sources_1/ip/BlockRAM" } ],
         "SELECTEDSIMMODEL": [ { "value": "" } ],
         "SHAREDDIR": [ { "value": "." } ],
         "SWVERSION": [ { "value": "2023.1" } ],

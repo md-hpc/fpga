@@ -36,9 +36,9 @@ module modd_cell(
     wire signed [32:0] M_s =  $signed(M);
 
     // Option candidates
-    wire signed [32:0] opt0 = b_s - M_s - a_s;
     wire signed [32:0] opt1 = b_s - a_s;
-    wire signed [32:0] opt2 = b_s + M_s - a_s;
+    wire signed [32:0] opt0 = opt1 - M_s;
+    wire signed [32:0] opt2 = opt1 + M_s;
 
     // Absolute values of options
     wire [32:0] abs0 = (opt0 < 0) ? -opt0 : opt0;

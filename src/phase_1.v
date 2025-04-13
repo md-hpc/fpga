@@ -19,7 +19,7 @@
 // 
 //////////////////////////////////////////////////////////////////////////////////
 (* keep_hierarchy = "yes" *)
-module phase_1 #(parameter N_CELL = 8)(
+module phase_1 #(parameter N_CELL = 27)(
     input clk,
     input fast_clk,
     input reset,

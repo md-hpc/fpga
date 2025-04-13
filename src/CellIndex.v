@@ -121,7 +121,7 @@ floating_point_1 intc (.s_axis_a_tdata(floor_c[0+:32]),.s_axis_a_tvalid(1),.m_ax
     
     
     
-    assign cIndex[0+:32] = _probe_a%2 + (_probe_b%2)*2+ (_probe_c%2)*2;
+    assign cIndex[0+:32] = _probe_a%3 + (_probe_b%3)*3+ (_probe_c%3)*9;
     assign cIndex[32] = pi[96] | vi[96];
     //assign cIndex = {{24{1'b0}},shifted_mantissa[30:23]};
     assign newp[0+:32] = mod_a[0+:32]; 

@@ -20,7 +20,7 @@
 //////////////////////////////////////////////////////////////////////////////////
 
 
-module PositionRingNode #(parameter NSIZE=8, parameter DBSIZE=256)(
+module PositionRingNode #(parameter NSIZE=14, parameter DBSIZE=256)(
     input  clk,
     input fast_clk,
     input  reset,
@@ -192,13 +192,13 @@ module PositionRingNode #(parameter NSIZE=8, parameter DBSIZE=256)(
     always @(posedge fast_clk) begin
         if(reset) begin
             counter <= 4'd15;
-            for(iter = 0; iter < 14; iter = iter + 1) begin
+            for(iter = 0; iter < NSIZE; iter = iter + 1) begin
                 neighbor_buff[iter*114+:114] = neighbors[iter*114+:114];
             end
         end else begin
             if(counter == 15) begin
                 counter <= 0;
-                for(iter = 0; iter < 14; iter = iter + 1) begin
+                for(iter = 0; iter < NSIZE; iter = iter + 1) begin
                     if(neighbors[iter*114+96] != 1) begin
                         neighbor_buff[iter*114+:114] = neighbors[iter*114+:114];
                     end

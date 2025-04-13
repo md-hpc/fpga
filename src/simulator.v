@@ -20,7 +20,7 @@
 //////////////////////////////////////////////////////////////////////////////////
 
 (* keep_hierarchy = "yes" *)
-module simulator#(parameter N_CELL = 8, parameter N_PARTICLES = 300)(
+module simulator#(parameter N_CELL = 27, parameter N_PARTICLES = 300)(
 //input clk,
 input fast_clk,
 input reset,
@@ -49,38 +49,38 @@ wire [N_CELL:0] phase3_done_w;
 wire phase3_ready;
 wire phase1_ready;
 
-wire [N_CELL-1:0] p1_wea;
-wire [32*N_CELL-1:0] p1_addra;
-wire [32*N_CELL-1:0] p1_addrb;
-wire [97*N_CELL-1:0] p1_v_dina;
-wire [97*N_CELL-1:0] p1_v_doutb;
-wire [32*N_CELL-1:0] p1_v_iaddr;
+(* keep = "true" *)wire [N_CELL-1:0] p1_wea;
+(* keep = "true" *)wire [32*N_CELL-1:0] p1_addra;
+(* keep = "true" *)wire [32*N_CELL-1:0] p1_addrb;
+(* keep = "true" *)wire [97*N_CELL-1:0] p1_v_dina;
+(* keep = "true" *)wire [97*N_CELL-1:0] p1_v_doutb;
+(* keep = "true" *)wire [32*N_CELL-1:0] p1_v_iaddr;
 
 
-wire [97*N_CELL-1:0] p1_p_doutb;
+(* keep = "true" *)wire [97*N_CELL-1:0] p1_p_doutb;
 
 
-wire [N_CELL-1:0] p3_wea;
-wire [32*N_CELL-1:0] p3_addra;
-wire [32*N_CELL-1:0] p3_addrb;
+(* keep = "true" *)wire [N_CELL-1:0] p3_wea;
+(* keep = "true" *)wire [32*N_CELL-1:0] p3_addra;
+(* keep = "true" *)wire [32*N_CELL-1:0] p3_addrb;
 
-wire [97*N_CELL-1:0] p3_v_dina;
-wire [97*N_CELL-1:0] p3_v_doutb;
+(* keep = "true" *)wire [97*N_CELL-1:0] p3_v_dina;
+(* keep = "true" *)wire [97*N_CELL-1:0] p3_v_doutb;
 
-wire [97*N_CELL-1:0] p3_p_dina;
-wire [97*N_CELL-1:0] p3_p_doutb;
+(* keep = "true" *)wire [97*N_CELL-1:0] p3_p_dina;
+(* keep = "true" *)wire [97*N_CELL-1:0] p3_p_doutb;
 
-wire [N_CELL-1:0] v_wea;
-wire [8:0] v_addra[N_CELL-1:0];
-wire [96:0] v_dina[N_CELL-1:0];
-wire [8:0] v_addrb[N_CELL-1:0];
-wire [96:0] v_doutb[N_CELL-1:0];
+(* keep = "true" *)wire [N_CELL-1:0] v_wea;
+(* keep = "true" *)wire [8:0] v_addra[N_CELL-1:0];
+(* keep = "true" *)wire [96:0] v_dina[N_CELL-1:0];
+(* keep = "true" *)wire [8:0] v_addrb[N_CELL-1:0];
+(* keep = "true" *)wire [96:0] v_doutb[N_CELL-1:0];
 
-wire [N_CELL-1:0] p_wea;
-wire [8:0] p_addra[N_CELL-1:0];
-wire [96:0] p_dina[N_CELL-1:0];
-wire [8:0] p_addrb[N_CELL-1:0];
-wire [96:0] p_doutb[N_CELL-1:0];
+(* keep = "true" *)wire [N_CELL-1:0] p_wea;
+(* keep = "true" *)wire [8:0] p_addra[N_CELL-1:0];
+(* keep = "true" *)wire [96:0] p_dina[N_CELL-1:0];
+(* keep = "true" *)wire [8:0] p_addrb[N_CELL-1:0];
+(* keep = "true" *)wire [96:0] p_doutb[N_CELL-1:0];
 
 reg [7:0] phase1_delay_counter;
 

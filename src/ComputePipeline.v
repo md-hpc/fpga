@@ -37,12 +37,12 @@ module ComputePipeline(
     integer iter;
     genvar i;
     reg [3:0] counter;
-    wire  [226:0] filter_bank_out;
-    wire  [226:0] pair_queue_out;
-    wire  [226:0] force_pipeline_out;
-    wire pq_empty;
-    wire [113:0] _reference;
-    reg [113:0] _reference_buff;
+    (* keep = "true" *)wire  [226:0] filter_bank_out;
+    (* keep = "true" *)wire  [226:0] pair_queue_out;
+   (* keep = "true" *) wire  [226:0] force_pipeline_out;
+    (* keep = "true" *)wire pq_empty;
+    (* keep = "true" *)wire [113:0] _reference;
+    (* keep = "true" *)reg [113:0] _reference_buff;
     
     wire _done;
     assign done = _done;
