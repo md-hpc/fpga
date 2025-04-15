@@ -26,21 +26,25 @@ input fast_clk,
 input reset,
 
 input data_in_ready,
-input [255:0]data_in,
+input [209:0]data_in,
 
 
 output  [97*N_CELL-1:0] out_p,
 output [N_CELL-1:0] en,
-output [9:0] initcounter
+output [9:0] initcounter,
+output elem_read,
+input [31:0] step,
+output done
 );
 
-
+reg [255:0] prev_in;
  (* keep = "true" *) reg clk;
 reg [15:0] counter;
  (* keep = "true" *) wire double_buffer;
 
 reg phase1_done;
 reg phase3_done;
+assign done = phase3_done;
 reg mem_set;
 wire phase1_done_w;
 wire [N_CELL:0] phase3_done_w_out;
@@ -88,7 +92,7 @@ reg [7:0] phase1_delay_counter;
 assign out_p = p3_p_dina;
 wire phase1_actualy_done = phase1_delay_counter> 98 && phase1_done ? 1'b1 : 1'b0;
 (* keep_hierarchy = "yes" *)
-ControlUnit CU(.clk(clk),.reset(reset),.phase1_done(phase1_actualy_done),.phase3_done(phase3_done),.mem_set(mem_set),.double_buffer(double_buffer),.phase3_ready(phase3_ready),.phase1_ready(phase1_ready));
+ControlUnit CU(.clk(clk),.reset(reset),.phase1_done(phase1_actualy_done),.phase3_done(phase3_done),.mem_set(mem_set),.double_buffer(double_buffer),.phase3_ready(phase3_ready),.phase1_ready(phase1_ready),.step(step));
 (* keep_hierarchy = "yes" *)
 phase_1 phase1(.clk(clk),.fast_clk(fast_clk),.reset(reset | (~mem_set)),.CTL_DONE(phase1_done_w),.CTL_DOUBLE_BUFFER(double_buffer),.CTL_READY(phase1_ready),.oaddr(p1_addra),.iaddr(p1_addrb),.r_p_caches(p1_p_doutb),.r_v_caches(p1_v_doutb),.w_v_caches(p1_v_dina),.wr_en(p1_wea),.v_iaddr(p1_v_iaddr));
 phase_3 phase3(.clk(clk),.reset(reset | (~mem_set)),.CTL_DONE(phase3_done_w_out),.CTL_DOUBLE_BUFFER(double_buffer),.CTL_READY(phase3_ready),.wr_en(p3_wea),.oaddr(p3_addrb),.iaddr(p3_addra),.r_p_caches(p3_p_doutb),.w_p_caches(p3_p_dina),.r_v_caches(p3_v_doutb),.w_v_caches(p3_v_dina));
@@ -99,6 +103,8 @@ reg [9:0] init_counter;
 assign initcounter = init_counter;
 assign phase3_done_w_acc[0] = phase3_done_w_out[0];
 assign phase3_done_w = phase3_done_w_acc[N_CELL];
+
+assign elem_read = prev_in == data_in;
 
 genvar i;
 generate
@@ -161,6 +167,7 @@ always @(posedge clk, posedge reset) begin
         init_counter <= 0;
         phase1_delay_counter <= 0;
         mem_set <= 0;
+        prev_in <= 0;
     end else begin
         if(phase3_done == 1) begin
             phase1_delay_counter <= 0;
@@ -170,8 +177,9 @@ always @(posedge clk, posedge reset) begin
     
     
         if(init_counter < N_PARTICLES+4) begin
-            if(data_in_ready) begin
-                init_counter = init_counter + 1;
+            if(data_in_ready && prev_in != data_in) begin
+                init_counter <= init_counter + 1;
+                prev_in <= data_in;
             end
             if(init_counter == N_PARTICLES + 3) begin
                 mem_set <= 1;

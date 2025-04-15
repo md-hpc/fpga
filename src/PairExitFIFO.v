@@ -24,8 +24,9 @@ module PairExitFIFO(
 input  clk,
     input  reset,
     input  [226:0] in,
-    output [226:0] out,
-    output qempty
+    output [191:0] out,
+    output qempty,
+    input read_ctrl
     );
     genvar i;
     reg emp;
@@ -45,11 +46,13 @@ input  clk,
         end  
     endgenerate
     */
+    reg host_read;
+    wire host_en = (read_ctrl == 1'b1 && host_read == 1'b0)? 1'b1 : 1'b0;
     assign qempty = emp;
     assign data_in = in;
-    assign wr_en = (counter < 14);
-    assign rd_en = counter == 15;
-    assign out = (emp)? {1'b1,{226{1'b0}}}:im_out;
+    assign wr_en = (counter < 14) && ~(in[193] & in[194]);
+    assign rd_en = host_en && counter == 15;
+    assign out = (emp)? {192{1'b0}}:im_out[0+:191];
     PQFIFO pq(.empty(q_empty),.srst(reset),.clk(clk),.din(in),.wr_en(wr_en),.full(q_full),.rd_en(rd_en),.dout(im_out));
     
     always @(posedge clk) begin
@@ -57,7 +60,9 @@ input  clk,
             counter <= 4'd15;
             emp <= q_empty;
             delayed_emp <= 1;
+            host_read <= 0;
         end else begin
+            host_read <= read_ctrl;
             if(counter == 15) begin
                 counter <= 0;
                 emp <= q_empty;

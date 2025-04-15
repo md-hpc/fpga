@@ -342,17 +342,17 @@
           <spirit:size spirit:format="long">32</spirit:size>
         </spirit:register>
         <spirit:register>
-          <spirit:name>number_packets</spirit:name>
+          <spirit:name>pos_x</spirit:name>
           <spirit:addressOffset>0x18</spirit:addressOffset>
           <spirit:size spirit:format="long">32</spirit:size>
         </spirit:register>
         <spirit:register>
-          <spirit:name>init_id</spirit:name>
+          <spirit:name>pos_y</spirit:name>
           <spirit:addressOffset>0x20</spirit:addressOffset>
           <spirit:size spirit:format="long">32</spirit:size>
         </spirit:register>
         <spirit:register>
-          <spirit:name>init_step</spirit:name>
+          <spirit:name>pos_z</spirit:name>
           <spirit:addressOffset>0x24</spirit:addressOffset>
           <spirit:size spirit:format="long">32</spirit:size>
         </spirit:register>
@@ -364,6 +364,81 @@
         <spirit:register>
           <spirit:name>debug_fsms</spirit:name>
           <spirit:addressOffset>0x2c</spirit:addressOffset>
+          <spirit:size spirit:format="long">32</spirit:size>
+        </spirit:register>
+        <spirit:register>
+          <spirit:name>vel_x</spirit:name>
+          <spirit:addressOffset>0x30</spirit:addressOffset>
+          <spirit:size spirit:format="long">32</spirit:size>
+        </spirit:register>
+        <spirit:register>
+          <spirit:name>vel_y</spirit:name>
+          <spirit:addressOffset>0x34</spirit:addressOffset>
+          <spirit:size spirit:format="long">32</spirit:size>
+        </spirit:register>
+        <spirit:register>
+          <spirit:name>vel_z</spirit:name>
+          <spirit:addressOffset>0x38</spirit:addressOffset>
+          <spirit:size spirit:format="long">32</spirit:size>
+        </spirit:register>
+        <spirit:register>
+          <spirit:name>Address</spirit:name>
+          <spirit:addressOffset>0x3c</spirit:addressOffset>
+          <spirit:size spirit:format="long">32</spirit:size>
+        </spirit:register>
+        <spirit:register>
+          <spirit:name>Cell</spirit:name>
+          <spirit:addressOffset>0x40</spirit:addressOffset>
+          <spirit:size spirit:format="long">32</spirit:size>
+        </spirit:register>
+        <spirit:register>
+          <spirit:name>elem_read</spirit:name>
+          <spirit:addressOffset>0x44</spirit:addressOffset>
+          <spirit:size spirit:format="long">32</spirit:size>
+        </spirit:register>
+        <spirit:register>
+          <spirit:name>read_ctrl</spirit:name>
+          <spirit:addressOffset>0x48</spirit:addressOffset>
+          <spirit:size spirit:format="long">32</spirit:size>
+        </spirit:register>
+        <spirit:register>
+          <spirit:name>step</spirit:name>
+          <spirit:addressOffset>0x4c</spirit:addressOffset>
+          <spirit:size spirit:format="long">32</spirit:size>
+        </spirit:register>
+        <spirit:register>
+          <spirit:name>done</spirit:name>
+          <spirit:addressOffset>0x50</spirit:addressOffset>
+          <spirit:size spirit:format="long">32</spirit:size>
+        </spirit:register>
+        <spirit:register>
+          <spirit:name>pos_x_out_A</spirit:name>
+          <spirit:addressOffset>0x54</spirit:addressOffset>
+          <spirit:size spirit:format="long">32</spirit:size>
+        </spirit:register>
+        <spirit:register>
+          <spirit:name>pos_y_out_A</spirit:name>
+          <spirit:addressOffset>0x58</spirit:addressOffset>
+          <spirit:size spirit:format="long">32</spirit:size>
+        </spirit:register>
+        <spirit:register>
+          <spirit:name>pos_z_out_A</spirit:name>
+          <spirit:addressOffset>0x5c</spirit:addressOffset>
+          <spirit:size spirit:format="long">32</spirit:size>
+        </spirit:register>
+        <spirit:register>
+          <spirit:name>pos_x_out_B</spirit:name>
+          <spirit:addressOffset>0x60</spirit:addressOffset>
+          <spirit:size spirit:format="long">32</spirit:size>
+        </spirit:register>
+        <spirit:register>
+          <spirit:name>pos_y_out_B</spirit:name>
+          <spirit:addressOffset>0x64</spirit:addressOffset>
+          <spirit:size spirit:format="long">32</spirit:size>
+        </spirit:register>
+        <spirit:register>
+          <spirit:name>pos_z_out_B</spirit:name>
+          <spirit:addressOffset>0x68</spirit:addressOffset>
           <spirit:size spirit:format="long">32</spirit:size>
         </spirit:register>
       </spirit:addressBlock>
@@ -392,7 +467,7 @@
         <spirit:parameters>
           <spirit:parameter>
             <spirit:name>viewChecksum</spirit:name>
-            <spirit:value>8a8690de</spirit:value>
+            <spirit:value>86e4d24e</spirit:value>
           </spirit:parameter>
         </spirit:parameters>
       </spirit:view>
@@ -417,7 +492,7 @@
         <spirit:parameters>
           <spirit:parameter>
             <spirit:name>viewChecksum</spirit:name>
-            <spirit:value>8a8690de</spirit:value>
+            <spirit:value>86e4d24e</spirit:value>
           </spirit:parameter>
         </spirit:parameters>
       </spirit:view>
@@ -1212,7 +1287,7 @@
       <spirit:file>
         <spirit:name>src/MD_RL.v</spirit:name>
         <spirit:fileType>verilogSource</spirit:fileType>
-        <spirit:userFileType>CHECKSUM_74341e75</spirit:userFileType>
+        <spirit:userFileType>CHECKSUM_be458579</spirit:userFileType>
         <spirit:userFileType>IMPORTED_FILE</spirit:userFileType>
       </spirit:file>
     </spirit:fileSet>
@@ -1578,8 +1653,8 @@
         <xilinx:xpmLibrary>XPM_CDC</xilinx:xpmLibrary>
         <xilinx:xpmLibrary>XPM_MEMORY</xilinx:xpmLibrary>
       </xilinx:xpmLibraries>
-      <xilinx:coreRevision>8</xilinx:coreRevision>
-      <xilinx:coreCreationDateTime>2025-04-15T01:53:44Z</xilinx:coreCreationDateTime>
+      <xilinx:coreRevision>9</xilinx:coreRevision>
+      <xilinx:coreCreationDateTime>2025-04-15T04:30:07Z</xilinx:coreCreationDateTime>
       <xilinx:sdxKernelAttributes>
         <xilinx:sdx_kernel>true</xilinx:sdx_kernel>
         <xilinx:sdx_kernel_type>rtl</xilinx:sdx_kernel_type>
@@ -1588,8 +1663,8 @@
     <xilinx:packagingInfo>
       <xilinx:xilinxVersion>2023.1</xilinx:xilinxVersion>
       <xilinx:checksum xilinx:scope="busInterfaces" xilinx:value="c127581d"/>
-      <xilinx:checksum xilinx:scope="memoryMaps" xilinx:value="7fdcdc6b"/>
-      <xilinx:checksum xilinx:scope="fileGroups" xilinx:value="b43cfafa"/>
+      <xilinx:checksum xilinx:scope="memoryMaps" xilinx:value="17788523"/>
+      <xilinx:checksum xilinx:scope="fileGroups" xilinx:value="03070b36"/>
       <xilinx:checksum xilinx:scope="ports" xilinx:value="0b6b3b30"/>
       <xilinx:checksum xilinx:scope="hdlParameters" xilinx:value="220b9dd3"/>
       <xilinx:checksum xilinx:scope="parameters" xilinx:value="dfa4d209"/>

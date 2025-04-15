@@ -104,9 +104,23 @@ module axi4lite # (
     output wire         [INIT_STEP_WIDTH-1:0]   init_step,
     output wire                         [2:0]   MD_state,
     output wire                        [31:0]   iter_target,
-    input [9:0] initcounter
+    input [9:0] initcounter,
+    input elem_read,
+    output read_ctrl,
+    output [31:0] step,
+    input done,
+    output [209:0] d_in,
+    input [191:0] d_out
 );
-
+    reg [31:0] pos_x_reg;
+    reg [31:0] pos_y_reg;
+    reg [31:0] pos_z_reg;
+    reg [31:0] vel_x_reg;
+    reg [31:0] vel_y_reg;
+    reg [31:0] vel_z_reg;
+    
+    reg [31:0] cell_reg;
+    reg [31:0] address_reg;
     // AXI4LITE signals
     reg [AXIL_ADDR_WIDTH-1 : 0]  axi_awaddr;
     reg     axi_awready;
@@ -118,7 +132,7 @@ module axi4lite # (
     reg [AXIL_DATA_WIDTH-1 : 0]  axi_rdata;
     reg [1 : 0]     axi_rresp;
     reg     axi_rvalid;
-
+    
     // Example-specific design signals
     // local parameter for addressing 32 bit / 64 bit AXIL_DATA_WIDTH
     // ADDR_LSB is used for addressing 32/64 bit registers/memories
@@ -146,6 +160,11 @@ module axi4lite # (
     integer  byte_index;
     reg  aw_en;
 
+    
+    reg [AXIL_DATA_WIDTH-1:0]  read_ctrl_reg = 32'h0;
+    reg [AXIL_DATA_WIDTH-1:0]   step_reg = 32'h0;
+    assign step = step_reg;
+    assign read_ctrl = read_ctrl_reg[0];
     // I/O Connections assignments
 
     assign S_AXIL_AWREADY    = axi_awready;
@@ -243,6 +262,16 @@ module axi4lite # (
             init_step_reg     <= 32'h0;
             debug_reset_reg   <= 32'h0;
             reset_fsm         <= 32'h0;
+            pos_x_reg         <= 32'h0;
+            pos_y_reg         <= 32'h0;
+            pos_z_reg         <= 32'h0;
+            vel_x_reg         <= 32'h0;
+            vel_y_reg         <= 32'h0;
+            vel_z_reg         <= 32'h0;
+            cell_reg          <= 32'h0;
+            address_reg       <= 32'h0;
+            read_ctrl_reg     <= 32'h0;
+            step_reg          <= 32'h0;
         end 
         else begin
             // Self clear
@@ -271,7 +300,7 @@ module axi4lite # (
                     7'h06:
                         for ( byte_index = 0; byte_index <= (AXIL_DATA_WIDTH/8)-1; byte_index = byte_index+1 )
                             if ( S_AXIL_WSTRB[byte_index] == 1 ) begin
-                                num_pkts_lsb_reg[(byte_index*8) +: 8] <= S_AXIL_WDATA[(byte_index*8) +: 8];
+                                pos_x_reg[(byte_index*8) +: 8] <= S_AXIL_WDATA[(byte_index*8) +: 8];
                             end  
                     7'h07:
                         for ( byte_index = 0; byte_index <= (AXIL_DATA_WIDTH/8)-1; byte_index = byte_index+1 )
@@ -281,29 +310,59 @@ module axi4lite # (
                     7'h08:
                         for ( byte_index = 0; byte_index <= (AXIL_DATA_WIDTH/8)-1; byte_index = byte_index+1 )
                             if ( S_AXIL_WSTRB[byte_index] == 1 ) begin
-                                init_id_reg[(byte_index*8) +: 8] <= S_AXIL_WDATA[(byte_index*8) +: 8];
+                                pos_y_reg[(byte_index*8) +: 8] <= S_AXIL_WDATA[(byte_index*8) +: 8];
                             end  
                     7'h09:
                         for ( byte_index = 0; byte_index <= (AXIL_DATA_WIDTH/8)-1; byte_index = byte_index+1 )
                             if ( S_AXIL_WSTRB[byte_index] == 1 ) begin
-                                init_step_reg[(byte_index*8) +: 8] <= S_AXIL_WDATA[(byte_index*8) +: 8];
+                                pos_z_reg[(byte_index*8) +: 8] <= S_AXIL_WDATA[(byte_index*8) +: 8];
                             end 
                     7'h0A:
                         for ( byte_index = 0; byte_index <= (AXIL_DATA_WIDTH/8)-1; byte_index = byte_index+1 )
                             if ( S_AXIL_WSTRB[byte_index] == 1 ) begin
                                 reset_fsm[(byte_index*8) +: 8] <= S_AXIL_WDATA[(byte_index*8) +: 8];
                             end                              
-                    7'h1F:
+                    7'h0B:
                         for ( byte_index = 0; byte_index <= (AXIL_DATA_WIDTH/8)-1; byte_index = byte_index+1 )
                             if ( S_AXIL_WSTRB[byte_index] == 1 ) begin
                                 debug_reset_reg[(byte_index*8) +: 8] <= S_AXIL_WDATA[(byte_index*8) +: 8];
-                            end                          
-                    7'h4D:
+                            end 
+                    7'h0C:
                         for ( byte_index = 0; byte_index <= (AXIL_DATA_WIDTH/8)-1; byte_index = byte_index+1 )
                             if ( S_AXIL_WSTRB[byte_index] == 1 ) begin
-                                iter_target_reg[(byte_index*8) +: 8] <= S_AXIL_WDATA[(byte_index*8) +: 8];
+                                vel_x_reg[(byte_index*8) +: 8] <= S_AXIL_WDATA[(byte_index*8) +: 8];
                             end  
-                     
+                    7'h0D:
+                        for ( byte_index = 0; byte_index <= (AXIL_DATA_WIDTH/8)-1; byte_index = byte_index+1 )
+                            if ( S_AXIL_WSTRB[byte_index] == 1 ) begin
+                                vel_y_reg[(byte_index*8) +: 8] <= S_AXIL_WDATA[(byte_index*8) +: 8];
+                            end 
+                    7'h0E:
+                        for ( byte_index = 0; byte_index <= (AXIL_DATA_WIDTH/8)-1; byte_index = byte_index+1 )
+                            if ( S_AXIL_WSTRB[byte_index] == 1 ) begin
+                                vel_z_reg[(byte_index*8) +: 8] <= S_AXIL_WDATA[(byte_index*8) +: 8];
+                            end 
+                    7'h0F:
+                        for ( byte_index = 0; byte_index <= (AXIL_DATA_WIDTH/8)-1; byte_index = byte_index+1 )
+                            if ( S_AXIL_WSTRB[byte_index] == 1 ) begin
+                                address_reg[(byte_index*8) +: 8] <= S_AXIL_WDATA[(byte_index*8) +: 8];
+                            end 
+                    7'h10:
+                        for ( byte_index = 0; byte_index <= (AXIL_DATA_WIDTH/8)-1; byte_index = byte_index+1 )
+                            if ( S_AXIL_WSTRB[byte_index] == 1 ) begin
+                                cell_reg[(byte_index*8) +: 8] <= S_AXIL_WDATA[(byte_index*8) +: 8];
+                            end 
+                    7'h12:
+                        for ( byte_index = 0; byte_index <= (AXIL_DATA_WIDTH/8)-1; byte_index = byte_index+1 )
+                            if ( S_AXIL_WSTRB[byte_index] == 1 ) begin
+                                read_ctrl_reg[(byte_index*8) +: 8] <= S_AXIL_WDATA[(byte_index*8) +: 8];
+                            end 
+                    7'h13:
+                        for ( byte_index = 0; byte_index <= (AXIL_DATA_WIDTH/8)-1; byte_index = byte_index+1 )
+                            if ( S_AXIL_WSTRB[byte_index] == 1 ) begin
+                                step_reg[(byte_index*8) +: 8] <= S_AXIL_WDATA[(byte_index*8) +: 8];
+                            end 
+                    
                     default : begin
                         ctrl_signals      <= ctrl_signals;
                         outbound_dest_reg <= outbound_dest_reg;
@@ -313,6 +372,15 @@ module axi4lite # (
                         iter_target_reg   <= iter_target_reg;
                         reset_fsm         <= reset_fsm;
                         debug_reset_reg   <= debug_reset_reg;
+                        pos_x_reg   <= pos_x_reg;
+                        pos_y_reg   <= pos_y_reg;
+                        pos_z_reg   <= pos_z_reg;
+                        vel_x_reg   <= vel_x_reg;
+                        vel_y_reg   <= vel_y_reg;
+                        vel_z_reg   <= vel_z_reg;
+                        address_reg <= address_reg;
+                        read_ctrl_reg <= read_ctrl_reg;
+                        step_reg <= step_reg;
                     end
                 endcase
             end
@@ -413,12 +481,28 @@ module axi4lite # (
             7'h00   : reg_data_out <= {{29{1'b0}},ap_idle,ap_done_1d,ap_start_1d};
             7'h04   : reg_data_out <= MD_state_reg;
             7'h05   : reg_data_out <= outbound_dest_reg;
-            7'h06   : reg_data_out <= num_pkts_lsb_reg;
-            7'h07   : reg_data_out <= num_pkts_msb_reg;
-            7'h08   : reg_data_out <= init_id_reg;
-            7'h09   : reg_data_out <= init_step_reg;
+            7'h06   : reg_data_out <= pos_x_reg;
+            7'h08   : reg_data_out <= pos_y_reg;
+            7'h09   : reg_data_out <= pos_z_reg;
             7'h0A   : reg_data_out <= {{22{1'b0}},initcounter};
-            7'h0B   : reg_data_out <= 32'd12345;       // Were debug_fsm related signals
+            7'h0B   : reg_data_out <= 32'd12345;
+            7'h0C   : reg_data_out <= vel_x_reg;
+            7'h0D   : reg_data_out <= vel_y_reg;
+            7'h0E   : reg_data_out <= vel_z_reg;
+            7'h0F   : reg_data_out <= address_reg;
+            7'h10   : reg_data_out <= cell_reg;
+            7'h11   : reg_data_out <= elem_read; 
+            7'h12   : reg_data_out <= read_ctrl_reg;
+            7'h13   : reg_data_out <= step_reg;
+            7'h14   : reg_data_out <= done;
+            7'h15   : reg_data_out <= d_out[0+:32];
+            7'h16   : reg_data_out <= d_out[32+:32];
+            7'h17   : reg_data_out <= d_out[64+:32];
+            7'h18   : reg_data_out <= d_out[96+:32];
+            7'h19   : reg_data_out <= d_out[128+:32];
+            7'h1A   : reg_data_out <= d_out[160+:32];
+            
+            
             default : reg_data_out <= {32{1'b0}};
           endcase
     end
@@ -466,13 +550,14 @@ module axi4lite # (
 
 
     assign ap_start             = ctrl_signals[0];
-    assign dest_id              = outbound_dest_reg[STREAMING_TDEST_WIDTH-1:0];
+    assign dest_id              = 0;
     assign number_packets       = {num_pkts_lsb_reg};
     assign MD_state             = MD_state_reg[2:0];
     assign iter_target          = iter_target_reg;
-    assign init_id              = init_id_reg[STREAMING_TDEST_WIDTH-1:0];
+    assign init_id              = 0;
     assign init_step            = init_step_reg[INIT_STEP_WIDTH-1:0];
     assign reset_fsm_n          = ~reset_fsm[0];
     assign debug_reset_n        = ~debug_reset_reg[0];
+    assign d_in                 = {address_reg[0+:9],cell_reg[0+8],vel_z_reg,vel_y_reg,vel_x_reg,pos_z_reg,pos_y_reg,pos_x_reg};
 
 endmodule

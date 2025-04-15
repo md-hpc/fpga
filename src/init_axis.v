@@ -68,10 +68,8 @@ always@(posedge clk) begin
         if (i_init_start) begin
             o_m_axis_k2h_tvalid    <= 0;
             o_m_axis_k2h_tdata     <= 0;
-            if (i_init_ID == i_s_axis_h2k_tdest) begin    // Match, write to pos caches
-                o_m_axis_k2pc_tvalid    <= i_s_axis_h2k_tvalid;
-                o_m_axis_k2pc_tdata     <= i_s_axis_h2k_tdata;
-            end    
+            o_m_axis_k2pc_tvalid    <= i_s_axis_h2k_tvalid;
+            o_m_axis_k2pc_tdata     <= i_s_axis_h2k_tdata;
         end
         else begin   
              if (i_dump_start) begin

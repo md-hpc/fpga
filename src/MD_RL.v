@@ -103,6 +103,12 @@ module MD_RL #(
 
 wire [9:0] initcounter;
 
+ wire [209:0] d_in;
+ wire [191:0] d_out;
+ wire elem_read;
+ wire read_ctrl;
+ wire [31:0] step;
+ wire done;
 MD_Wrapper inst_MD_wrapper (
     .ap_clk(ap_clk),
     .ap_rst_n(ap_rst_n),
@@ -122,11 +128,15 @@ MD_Wrapper inst_MD_wrapper (
     .M_AXIS_k2h_tready(M_AXIS_k2h_tready),
     
     .MD_state_w(MD_state_w),
-    .iter_target_w(iter_target_w),
-    .dest_id_w(dest_id_w),
     .init_id_w(init_id_w),
-    .init_step_w(init_step_w),
-    .initcounter(initcounter)
+    .initcounter(initcounter),
+    .elem_read(elem_read),
+    .read_ctrl(read_ctrl),
+    .step(step),
+    .done(done),
+    .d_in(d_in),
+    .d_out(d_out)
+    
 );
 
 axi4lite #(
@@ -162,7 +172,13 @@ axi4lite #(
         .init_step                  ( init_step_w             ),
         .dest_id                    ( dest_id_w               ),
         .number_packets             ( number_packets_w        ),
-        .initcounter                ( initcounter             )//,
+        .initcounter                ( initcounter             ),
+        .elem_read(elem_read),
+        .read_ctrl(read_ctrl),
+        .step(step),
+        .done(done),
+        .d_in(d_in),
+        .d_out(d_out)//,
         //.reset_fsm_n                ( reset_fsm_n_w           )
     );
 
