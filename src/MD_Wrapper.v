@@ -93,7 +93,7 @@ module MD_Wrapper  #(
     .i_s_axis_h2k_tlast      ( S_AXIS_h2k_tlast                     ),
     .i_s_axis_h2k_tdest      ( S_AXIS_h2k_tdest                     ));
     
-    simulator sim(ap_clk,~ap_rst_n,d_in[0+:209],d_in[209],out_p,en,initcounter,elem_read,step,done);
+    simulator sim(ap_clk,~ap_rst_n,d_in[209],d_in[0+:209],out_p,en,initcounter,elem_read,step,done);
     
     PairExitFIFO ExitFIFO(ap_clk,~ap_rst_n,{{31{1'b0}},w_en[2*counter+:2],actual_out_p[(97*2*counter)+:97*2]},exitQueueFIFO,read_ctrl);
     

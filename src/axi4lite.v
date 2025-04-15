@@ -558,6 +558,6 @@ module axi4lite # (
     assign init_step            = init_step_reg[INIT_STEP_WIDTH-1:0];
     assign reset_fsm_n          = ~reset_fsm[0];
     assign debug_reset_n        = ~debug_reset_reg[0];
-    assign d_in                 = {address_reg[0+:9],cell_reg[0+8],vel_z_reg,vel_y_reg,vel_x_reg,pos_z_reg,pos_y_reg,pos_x_reg};
+    assign d_in                 = {~elem_read,address_reg[0+:9],cell_reg[0+:8],vel_z_reg,vel_y_reg,vel_x_reg,pos_z_reg,pos_y_reg,pos_x_reg};
 
 endmodule
