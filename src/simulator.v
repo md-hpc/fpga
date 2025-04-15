@@ -30,7 +30,8 @@ input [255:0]data_in,
 
 
 output  [97*N_CELL-1:0] out_p,
-output [N_CELL-1:0] en
+output [N_CELL-1:0] en,
+output [9:0] initcounter
 );
 
 
@@ -95,7 +96,7 @@ phase_3 phase3(.clk(clk),.reset(reset | (~mem_set)),.CTL_DONE(phase3_done_w_out)
 
 reg [9:0] init_counter;
 
-
+assign initcounter = init_counter;
 assign phase3_done_w_acc[0] = phase3_done_w_out[0];
 assign phase3_done_w = phase3_done_w_acc[N_CELL];
 

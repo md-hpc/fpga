@@ -103,7 +103,8 @@ module axi4lite # (
     output wire                        [31:0]   number_packets,
     output wire         [INIT_STEP_WIDTH-1:0]   init_step,
     output wire                         [2:0]   MD_state,
-    output wire                        [31:0]   iter_target
+    output wire                        [31:0]   iter_target,
+    input [9:0] initcounter
 );
 
     // AXI4LITE signals
@@ -416,8 +417,8 @@ module axi4lite # (
             7'h07   : reg_data_out <= num_pkts_msb_reg;
             7'h08   : reg_data_out <= init_id_reg;
             7'h09   : reg_data_out <= init_step_reg;
-            7'h0A   : reg_data_out <= reset_fsm;
-            7'h0B   : reg_data_out <= {32{1'b0}};       // Were debug_fsm related signals
+            7'h0A   : reg_data_out <= {{22{1'b0}},initcounter};
+            7'h0B   : reg_data_out <= 32'd12345;       // Were debug_fsm related signals
             default : reg_data_out <= {32{1'b0}};
           endcase
     end

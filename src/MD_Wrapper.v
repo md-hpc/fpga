@@ -57,7 +57,8 @@ module MD_Wrapper  #(
     input  wire                       [31:0]    iter_target_w,
     input  wire  [STREAMING_TDEST_WIDTH-1:0]    dest_id_w,
     input  wire  [STREAMING_TDEST_WIDTH-1:0]    init_id_w,
-    input  wire        [INIT_STEP_WIDTH-1:0]    init_step_w
+    input  wire        [INIT_STEP_WIDTH-1:0]    init_step_w,
+    output [9:0] initcounter
     );
     
     reg [3:0] counter;
@@ -89,7 +90,7 @@ module MD_Wrapper  #(
     .i_s_axis_h2k_tlast      ( S_AXIS_h2k_tlast                     ),
     .i_s_axis_h2k_tdest      ( S_AXIS_h2k_tdest                     ));
     
-    simulator sim(ap_clk,~ap_rst_n,k2pc_tdata,k2pc_tvalid,out_p,en);
+    simulator sim(ap_clk,~ap_rst_n,k2pc_tdata,k2pc_tvalid,out_p,en,initcounter);
     
     PairExitFIFO ExitFIFO(ap_clk,~ap_rst_n,{{31{1'b0}},w_en[2*counter+:2],actual_out_p[(97*2*counter)+:97*2]},exitQueueFIFO);
     
