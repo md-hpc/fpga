@@ -109,6 +109,9 @@ wire [9:0] initcounter;
  wire read_ctrl;
  wire [31:0] step;
  wire done;
+ 
+ 
+ wire elem_write;
 MD_Wrapper inst_MD_wrapper (
     .ap_clk(ap_clk),
     .ap_rst_n(ap_rst_n),
@@ -135,7 +138,8 @@ MD_Wrapper inst_MD_wrapper (
     .step(step),
     .done(done),
     .d_in(d_in),
-    .d_out(d_out)
+    .d_out(d_out),
+    .elem_write(elem_write)
     
 );
 
@@ -178,7 +182,8 @@ axi4lite #(
         .step(step),
         .done(done),
         .d_in(d_in),
-        .d_out(d_out)//,
+        .d_out(d_out),
+        .elem_write(elem_write)//,
         //.reset_fsm_n                ( reset_fsm_n_w           )
     );
 

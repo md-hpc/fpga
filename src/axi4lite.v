@@ -110,7 +110,8 @@ module axi4lite # (
     output [31:0] step,
     input done,
     output [209:0] d_in,
-    input [191:0] d_out
+    input [191:0] d_out,
+    output elem_write
 );
     reg [31:0] pos_x_reg;
     reg [31:0] pos_y_reg;
@@ -163,6 +164,7 @@ module axi4lite # (
     
     reg [AXIL_DATA_WIDTH-1:0]  read_ctrl_reg = 32'h0;
     reg [AXIL_DATA_WIDTH-1:0]   step_reg = 32'h0;
+    reg [AXIL_DATA_WIDTH-1:0]   elem_write_reg = 32'h0;
     assign step = step_reg;
     assign read_ctrl = read_ctrl_reg[0];
     // I/O Connections assignments
@@ -272,6 +274,7 @@ module axi4lite # (
             address_reg       <= 32'h0;
             read_ctrl_reg     <= 32'h0;
             step_reg          <= 32'h0;
+            elem_write_reg    <= 32'h0;
         end 
         else begin
             // Self clear
@@ -362,6 +365,13 @@ module axi4lite # (
                             if ( S_AXIL_WSTRB[byte_index] == 1 ) begin
                                 step_reg[(byte_index*8) +: 8] <= S_AXIL_WDATA[(byte_index*8) +: 8];
                             end 
+                    7'h1B:
+                        for ( byte_index = 0; byte_index <= (AXIL_DATA_WIDTH/8)-1; byte_index = byte_index+1 )
+                            if ( S_AXIL_WSTRB[byte_index] == 1 ) begin
+                                elem_write_reg[(byte_index*8) +: 8] <= S_AXIL_WDATA[(byte_index*8) +: 8];
+                            end 
+                    
+                    
                     
                     default : begin
                         ctrl_signals      <= ctrl_signals;
@@ -381,6 +391,7 @@ module axi4lite # (
                         address_reg <= address_reg;
                         read_ctrl_reg <= read_ctrl_reg;
                         step_reg <= step_reg;
+                        elem_write_reg <= elem_write_reg;
                     end
                 endcase
             end
@@ -501,7 +512,7 @@ module axi4lite # (
             7'h18   : reg_data_out <= d_out[96+:32];
             7'h19   : reg_data_out <= d_out[128+:32];
             7'h1A   : reg_data_out <= d_out[160+:32];
-            
+            7'h1B   : reg_data_out <= elem_write_reg;
             
             default : reg_data_out <= {32{1'b0}};
           endcase
@@ -559,5 +570,5 @@ module axi4lite # (
     assign reset_fsm_n          = ~reset_fsm[0];
     assign debug_reset_n        = ~debug_reset_reg[0];
     assign d_in                 = {~elem_read,address_reg[0+:9],cell_reg[0+:8],vel_z_reg,vel_y_reg,vel_x_reg,pos_z_reg,pos_y_reg,pos_x_reg};
-
+    assign elem_write = elem_write_reg[31];
 endmodule

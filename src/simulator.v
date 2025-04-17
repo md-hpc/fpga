@@ -34,6 +34,7 @@ output [N_CELL-1:0] en,
 output [9:0] initcounter,
 output elem_read,
 input [31:0] step,
+input elem_write,
 output done
 );
 
@@ -111,7 +112,7 @@ generate
 for(i = 0; i < N_CELL; i = i + 1) begin
     assign en[i] = phase3_ready & p3_wea[i];
     assign p_wea[i] = phase1_ready? 1'b0 : 
-                      phase3_ready? p3_wea[i]: data_in_ready & data_in[192+:8] == i;
+                      phase3_ready? p3_wea[i]: data_in_ready & data_in[192+:8] == i & elem_write;
     assign p_addra[i] = phase1_ready? p1_addra[i*32+:32] : 
                       phase3_ready? p3_addra[i*32+:32] : data_in[200+:9];
     assign p_addrb[i] = phase1_ready? p1_addrb[i*32+:32] : 
@@ -124,7 +125,7 @@ for(i = 0; i < N_CELL; i = i + 1) begin
     assign p3_p_doutb[i*97+:97] = phase3_ready? p_doutb[i] : 0;
                       
     assign v_wea[i] = phase1_ready? p1_wea[i] : 
-                      phase3_ready? p3_wea[i] : data_in_ready & data_in[192+:8] == i;
+                      phase3_ready? p3_wea[i] : data_in_ready & data_in[192+:8] == i & elem_write;
     assign v_addra[i] = phase1_ready? p1_v_iaddr[i*32+:32] : 
                       phase3_ready? p3_addra[i*32+:32] : data_in[200+:9];
     assign v_addrb[i] = phase1_ready? p1_addra[i*32+:32] : 
@@ -177,7 +178,7 @@ always @(posedge clk, posedge reset) begin
     
     
         if(init_counter < N_PARTICLES+4) begin
-            if(data_in_ready && prev_in != data_in) begin
+            if(data_in_ready && prev_in != data_in && elem_write) begin
                 init_counter <= init_counter + 1;
                 prev_in <= data_in;
             end

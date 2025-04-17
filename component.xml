@@ -441,6 +441,11 @@
           <spirit:addressOffset>0x68</spirit:addressOffset>
           <spirit:size spirit:format="long">32</spirit:size>
         </spirit:register>
+        <spirit:register>
+          <spirit:name>elem_write</spirit:name>
+          <spirit:addressOffset>0x6c</spirit:addressOffset>
+          <spirit:size spirit:format="long">32</spirit:size>
+        </spirit:register>
       </spirit:addressBlock>
     </spirit:memoryMap>
   </spirit:memoryMaps>
@@ -467,7 +472,7 @@
         <spirit:parameters>
           <spirit:parameter>
             <spirit:name>viewChecksum</spirit:name>
-            <spirit:value>28daf7f7</spirit:value>
+            <spirit:value>3674ed7a</spirit:value>
           </spirit:parameter>
         </spirit:parameters>
       </spirit:view>
@@ -492,7 +497,7 @@
         <spirit:parameters>
           <spirit:parameter>
             <spirit:name>viewChecksum</spirit:name>
-            <spirit:value>28daf7f7</spirit:value>
+            <spirit:value>3674ed7a</spirit:value>
           </spirit:parameter>
         </spirit:parameters>
       </spirit:view>
@@ -1287,7 +1292,7 @@
       <spirit:file>
         <spirit:name>src/MD_RL.v</spirit:name>
         <spirit:fileType>verilogSource</spirit:fileType>
-        <spirit:userFileType>CHECKSUM_be458579</spirit:userFileType>
+        <spirit:userFileType>CHECKSUM_8806e173</spirit:userFileType>
         <spirit:userFileType>IMPORTED_FILE</spirit:userFileType>
       </spirit:file>
     </spirit:fileSet>
@@ -1653,8 +1658,8 @@
         <xilinx:xpmLibrary>XPM_CDC</xilinx:xpmLibrary>
         <xilinx:xpmLibrary>XPM_MEMORY</xilinx:xpmLibrary>
       </xilinx:xpmLibraries>
-      <xilinx:coreRevision>10</xilinx:coreRevision>
-      <xilinx:coreCreationDateTime>2025-04-15T23:03:03Z</xilinx:coreCreationDateTime>
+      <xilinx:coreRevision>11</xilinx:coreRevision>
+      <xilinx:coreCreationDateTime>2025-04-17T03:20:21Z</xilinx:coreCreationDateTime>
       <xilinx:sdxKernelAttributes>
         <xilinx:sdx_kernel>true</xilinx:sdx_kernel>
         <xilinx:sdx_kernel_type>rtl</xilinx:sdx_kernel_type>
@@ -1663,8 +1668,8 @@
     <xilinx:packagingInfo>
       <xilinx:xilinxVersion>2023.1</xilinx:xilinxVersion>
       <xilinx:checksum xilinx:scope="busInterfaces" xilinx:value="c127581d"/>
-      <xilinx:checksum xilinx:scope="memoryMaps" xilinx:value="17788523"/>
-      <xilinx:checksum xilinx:scope="fileGroups" xilinx:value="19ee2ee6"/>
+      <xilinx:checksum xilinx:scope="memoryMaps" xilinx:value="7362a501"/>
+      <xilinx:checksum xilinx:scope="fileGroups" xilinx:value="1b561044"/>
       <xilinx:checksum xilinx:scope="ports" xilinx:value="0b6b3b30"/>
       <xilinx:checksum xilinx:scope="hdlParameters" xilinx:value="220b9dd3"/>
       <xilinx:checksum xilinx:scope="parameters" xilinx:value="dfa4d209"/>
