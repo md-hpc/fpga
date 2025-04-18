@@ -50,7 +50,7 @@ input  clk,
     wire host_en = (read_ctrl == 1'b1 && host_read == 1'b0)? 1'b1 : 1'b0;
     assign qempty = emp;
     assign data_in = in;
-    assign wr_en = (counter < 14) && ~(in[193] & in[194]);
+    assign wr_en = (counter < 14) && ~(in[194] & in[195]);
     assign rd_en = host_en && counter == 15;
     assign out = (emp)? {192{1'b0}}:im_out[0+:191];
     PQFIFO pq(.empty(q_empty),.srst(reset),.clk(clk),.din(in),.wr_en(wr_en),.full(q_full),.rd_en(rd_en),.dout(im_out));

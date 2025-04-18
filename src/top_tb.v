@@ -29,7 +29,7 @@ module top_tb(
     reg clk, fast_clk, reset, data_in_ready;
     reg [255:0] data_in;
     
-    simulator sim(fast_clk,reset,data_in_ready,data_in);
+    simulator sim(.fast_clk(fast_clk),.reset(reset),.data_in_ready(data_in_ready),.data_in(data_in),.step(0),.elem_write(data_in_ready));
     
     initial begin
     fast_clk = 0;

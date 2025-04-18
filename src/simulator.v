@@ -177,12 +177,12 @@ always @(posedge clk, posedge reset) begin
         end
     
     
-        if(init_counter < N_PARTICLES+4) begin
+        if(init_counter < N_PARTICLES) begin
             if(data_in_ready && prev_in != data_in && elem_write) begin
                 init_counter <= init_counter + 1;
                 prev_in <= data_in;
             end
-            if(init_counter == N_PARTICLES + 3) begin
+            if(init_counter == N_PARTICLES-1) begin
                 mem_set <= 1;
             end
         end else begin
