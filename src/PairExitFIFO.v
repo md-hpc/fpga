@@ -25,7 +25,7 @@ input  clk,
     input  reset,
     input  [226:0] in,
     output [191:0] out,
-    output qempty,
+    //output qempty,
     input read_ctrl
     );
     genvar i;
@@ -50,7 +50,7 @@ input  clk,
     wire host_en = (read_ctrl == 1'b1 && host_read == 1'b0)? 1'b1 : 1'b0;
     assign qempty = emp;
     assign data_in = in;
-    assign wr_en = (counter < 14) && ~(in[194] & in[195]);
+    assign wr_en = (counter < 14) && (in[194] | in[195]) && (in[0+:97] != 97'h1000000000000000000000000 || in[97+:97] != 97'h1000000000000000000000000) ;
     assign rd_en = host_en && counter == 15;
     assign out = (emp)? {192{1'b0}}:im_out[0+:191];
     PQFIFO pq(.empty(q_empty),.srst(reset),.clk(clk),.din(in),.wr_en(wr_en),.full(q_full),.rd_en(rd_en),.dout(im_out));

@@ -38,7 +38,7 @@ module ControlUnit(
     assign phase3_ready = phase == 1;
     // PHASE 1 -> phase = 0
     // PHASE 3 -> phase = 1
-    reg step_counter;
+    reg [31:0] step_counter;
     always @(posedge clk, posedge reset) begin
         if(reset) begin
             phase <= 2;
