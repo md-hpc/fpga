@@ -111,7 +111,8 @@ module axi4lite # (
     input done,
     output [209:0] d_in,
     input [191:0] d_out,
-    output elem_write
+    output elem_write,
+    output debug_reset_n
 );
     reg [31:0] pos_x_reg;
     reg [31:0] pos_y_reg;

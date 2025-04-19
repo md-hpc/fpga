@@ -110,11 +110,11 @@ wire [9:0] initcounter;
  wire [31:0] step;
  wire done;
  
- 
+ wire debug_reset_n;
  wire elem_write;
 MD_Wrapper inst_MD_wrapper (
     .ap_clk(ap_clk),
-    .ap_rst_n(ap_rst_n),
+    .ap_rst_n(ap_rst_n | debug_reset_n),
     
     .S_AXIS_h2k_tdata(S_AXIS_h2k_tdata),
     .S_AXIS_h2k_tkeep(S_AXIS_h2k_tkeep),
@@ -183,7 +183,8 @@ axi4lite #(
         .done(done),
         .d_in(d_in),
         .d_out(d_out),
-        .elem_write(elem_write)//,
+        .elem_write(elem_write),
+        .debug_reset_n(debug_reset_n)//,
         //.reset_fsm_n                ( reset_fsm_n_w           )
     );
 

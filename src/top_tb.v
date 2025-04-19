@@ -45,7 +45,7 @@ module top_tb(
     step = 0;
     $readmemh("C:/Users/fadik/Documents/BU/EC464/RTL_MD/RTL_MD.srcs/sim_1/new/BRAM_INIT.txt", particles);
     #160 reset = 0;
-    
+    #260
     data_in_ready = 1;
     for(i = 0; i < 300; i=i+1)begin
         #32 data_in = particles[i];
