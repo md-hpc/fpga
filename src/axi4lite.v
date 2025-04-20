@@ -497,7 +497,7 @@ module axi4lite # (
             7'h08   : reg_data_out <= pos_y_reg;
             7'h09   : reg_data_out <= pos_z_reg;
             7'h0A   : reg_data_out <= {{22{1'b0}},initcounter};
-            7'h0B   : reg_data_out <= 32'd12345;
+            7'h0B   : reg_data_out <= debug_reset_reg;
             7'h0C   : reg_data_out <= vel_x_reg;
             7'h0D   : reg_data_out <= vel_y_reg;
             7'h0E   : reg_data_out <= vel_z_reg;

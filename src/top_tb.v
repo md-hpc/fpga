@@ -47,7 +47,9 @@ module top_tb(
     #160 reset = 0;
     #260
     data_in_ready = 1;
+    #400
     for(i = 0; i < 300; i=i+1)begin
+    #100
         #32 data_in = particles[i];
     end
     data_in_ready = 0;
