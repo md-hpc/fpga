@@ -46,6 +46,7 @@ input  clk,
         end  
     endgenerate
     */
+    
     reg host_read;
     wire host_en = (read_ctrl == 1'b1 && host_read == 1'b0)? 1'b1 : 1'b0;
     assign qempty = emp;
@@ -62,8 +63,9 @@ input  clk,
             delayed_emp <= 1;
             host_read <= 0;
         end else begin
-            host_read <= read_ctrl;
+            
             if(counter == 15) begin
+                host_read <= read_ctrl;
                 counter <= 0;
                 emp <= q_empty;
                 if(delayed_emp == 1) begin

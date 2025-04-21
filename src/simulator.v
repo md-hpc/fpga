@@ -110,7 +110,7 @@ assign elem_read = prev_in == data_in;
 genvar i;
 generate
 for(i = 0; i < N_CELL; i = i + 1) begin
-    assign en[i] = phase3_ready & p3_wea[i];
+    assign en[i] = phase3_ready & p3_wea[i] &(p_dina[i][96] != 1);
     assign p_wea[i] = phase1_ready? 1'b0 : 
                       phase3_ready? p3_wea[i]: data_in_ready & data_in[192+:8] == i & elem_write;
     assign p_addra[i] = phase1_ready? p1_addra[i*32+:32] : 
