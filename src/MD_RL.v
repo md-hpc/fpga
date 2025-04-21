@@ -114,7 +114,7 @@ wire [9:0] initcounter;
  wire elem_write;
 MD_Wrapper inst_MD_wrapper (
     .ap_clk(ap_clk),
-    .ap_rst_n(ap_rst_n | debug_reset_n),
+    .ap_rst_n(ap_rst_n & debug_reset_n),
     
     .S_AXIS_h2k_tdata(S_AXIS_h2k_tdata),
     .S_AXIS_h2k_tkeep(S_AXIS_h2k_tkeep),
