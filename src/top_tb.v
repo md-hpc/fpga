@@ -61,8 +61,8 @@ integer j;
     #20000
     
     for(i = 0; i < 300; i=i+1)begin
-        #92 read_ctrl = 1;
-        #32 read_ctrl = 0;
+        #128 read_ctrl = 1;
+        #576 read_ctrl = 0;
     end
     step = 1;
     end
