@@ -26,7 +26,8 @@ input  clk,
     input  [226:0] in,
     output [191:0] out,
     //output qempty,
-    input read_ctrl
+    input read_ctrl,
+    output [31:0] out_count
     );
     genvar i;
     reg emp;
@@ -54,8 +55,8 @@ input  clk,
     assign wr_en = (counter < 14) && (in[194] | in[195]) && (in[0+:97] != 97'h1000000000000000000000000 || in[97+:97] != 97'h1000000000000000000000000) ;
     assign rd_en = host_en && counter == 15;
     assign out = (emp)? {192{1'b0}}:im_out[0+:191];
-    PQFIFO pq(.empty(q_empty),.srst(reset),.clk(clk),.din(in),.wr_en(wr_en),.full(q_full),.rd_en(rd_en),.dout(im_out));
-    
+    EXITFIFO pq(.empty(q_empty),.srst(reset),.clk(clk),.din(in),.wr_en(wr_en),.full(q_full),.rd_en(rd_en),.dout(im_out),.data_count(out_count[7:0]));
+    assign out_count[8+:24] = {24{1'b0}};
     always @(posedge clk) begin
         if(reset) begin
             counter <= 4'd15;

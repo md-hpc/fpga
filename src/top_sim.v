@@ -46,7 +46,7 @@ module ControlUnit(
             step_counter <= 0;
         end else begin
             if(mem_set && phase == 2) begin
-                phase <= 0; //Change this back to 0!!!!!
+                phase <= 1; //Change this back to 0!!!!!
             end else if(mem_set) begin
                 if(phase == 0 && phase1_done == 1) begin
                     phase <= 1;

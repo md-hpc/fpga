@@ -62,7 +62,8 @@ module MD_Wrapper  #(
     output done,
     input [209:0] d_in,
     output [191:0] d_out,
-    input elem_write
+    input elem_write,
+    output [31:0] out_count
     );
     
     reg [3:0] counter;
@@ -96,7 +97,7 @@ module MD_Wrapper  #(
     
     simulator sim(ap_clk,~ap_rst_n,elem_write,d_in[0+:210],out_p,en,initcounter,elem_read,step,elem_write,done);
     
-    PairExitFIFO ExitFIFO(ap_clk,~ap_rst_n,{{31{1'b0}},w_en[2*counter+:2],actual_out_p[(97*2*counter)+:97*2]},exitQueueFIFO,read_ctrl);
+    PairExitFIFO ExitFIFO(ap_clk,~ap_rst_n,{{31{1'b0}},w_en[2*counter+:2],actual_out_p[(97*2*counter)+:97*2]},exitQueueFIFO,read_ctrl,out_count);
     
     
     always @(posedge ap_clk) begin

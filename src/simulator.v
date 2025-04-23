@@ -38,7 +38,7 @@ input elem_write,
 output done
 );
 
-reg [255:0] prev_in;
+reg [209:0] prev_in;
  (* keep = "true" *) reg clk;
 reg [15:0] counter;
  (* keep = "true" *) wire double_buffer;
@@ -89,6 +89,10 @@ wire phase1_ready;
 (* keep = "true" *)wire [96:0] p_doutb[N_CELL-1:0];
 
 reg [7:0] phase1_delay_counter;
+reg [209:0] data_in_reg;
+reg data_in_ready_reg, data_in_ready_prev;
+wire data_in_ready_pulse;
+
 
 assign out_p = p3_p_dina;
 wire phase1_actualy_done = phase1_delay_counter> 98 && phase1_done ? 1'b1 : 1'b0;
@@ -160,6 +164,13 @@ end else begin
 end
 
 end
+always @(posedge clk) begin
+    data_in_reg <= data_in;
+    data_in_ready_reg <= data_in_ready;
+    data_in_ready_prev <= data_in_ready_reg;
+end
+
+assign data_in_ready_pulse = data_in_ready_reg && ~data_in_ready_prev;
 
 always @(posedge clk, posedge reset) begin
     if(reset) begin
@@ -178,9 +189,9 @@ always @(posedge clk, posedge reset) begin
     
     
         if(init_counter < N_PARTICLES) begin
-            if(data_in_ready && prev_in != data_in && elem_write) begin
+            if(data_in_ready && prev_in != data_in_reg && elem_write && data_in_ready_pulse ) begin
                 init_counter <= init_counter + 1;
-                prev_in <= data_in;
+                prev_in <= data_in_reg;
             end
         end else begin
             mem_set <= 1;

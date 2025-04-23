@@ -44,15 +44,18 @@ integer j;
     read_ctrl = 0;
     num_in = 0;
     step = 0;
-    
+    data_in = 0;
     $readmemh("C:/Users/fadik/Documents/BU/EC464/RTL_MD/RTL_MD.srcs/sim_1/new/BRAM_INIT.txt", particles);
     #160 reset = 0;
     #260
-    data_in_ready = 1;
+    
     #400
     for(i = 0; i < 300; i=i+1)begin
     #100
+    data_in_ready = 0;
         #32 data_in = particles[i];
+        #64
+        data_in_ready = 1;
     end
     #32
     data_in_ready = 0;
@@ -61,8 +64,8 @@ integer j;
     #20000
     
     for(i = 0; i < 300; i=i+1)begin
-        #128 read_ctrl = 1;
-        #576 read_ctrl = 0;
+        #513 read_ctrl = 1;
+        #534 read_ctrl = 0;
     end
     step = 1;
     end
