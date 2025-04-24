@@ -57,6 +57,7 @@ integer j;
         #64
         data_in_ready = 1;
     end
+    #100
     #32
     data_in_ready = 0;
     //$finish;

@@ -35,7 +35,8 @@ output [9:0] initcounter,
 output elem_read,
 input [31:0] step,
 input elem_write,
-output done
+output done,
+output [96:0]out_pos
 );
 
 reg [209:0] prev_in;
@@ -110,7 +111,7 @@ assign phase3_done_w_acc[0] = phase3_done_w_out[0];
 assign phase3_done_w = phase3_done_w_acc[N_CELL];
 
 assign elem_read = prev_in == data_in;
-
+assign out_pos = p_doutb[data_in[192+:8]];
 genvar i;
 generate
 for(i = 0; i < N_CELL; i = i + 1) begin
@@ -120,7 +121,8 @@ for(i = 0; i < N_CELL; i = i + 1) begin
     assign p_addra[i] = phase1_ready? p1_addra[i*32+:32] : 
                       phase3_ready? p3_addra[i*32+:32] : data_in[200+:9];
     assign p_addrb[i] = phase1_ready? p1_addrb[i*32+:32] : 
-                      phase3_ready? p3_addrb[i*32+:32] : 0;
+                      (phase3_ready && phase3_done == 0)? p3_addrb[i*32+:32] :
+                      (phase3_ready && phase3_done == 1)? data_in[200+:9] : 0;
     assign p_dina[i] = phase1_ready? {1'b0,data_in[0+:96]} : 
                       phase3_ready? p3_p_dina[i*97+:97] : {1'b0,data_in[0+:96]};
     //assign p_doutb[i] = phase1_ready? p1_p_doutb[i*97+:97] : 

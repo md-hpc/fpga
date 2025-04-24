@@ -113,7 +113,8 @@ module axi4lite # (
     input [191:0] d_out,
     output elem_write,
     output debug_reset_n,
-    input [31:0] out_count
+    input [31:0] out_count,
+    input [96:0] out_pos
 );
     reg [31:0] pos_x_reg;
     reg [31:0] pos_y_reg;
@@ -508,9 +509,9 @@ module axi4lite # (
             7'h12   : reg_data_out <= read_ctrl_reg;
             7'h13   : reg_data_out <= step_reg;
             7'h14   : reg_data_out <= done;
-            7'h15   : reg_data_out <= d_out[0+:32];
-            7'h16   : reg_data_out <= d_out[32+:32];
-            7'h17   : reg_data_out <= d_out[64+:32];
+            7'h15   : reg_data_out <= out_pos[0+:32];
+            7'h16   : reg_data_out <= out_pos[32+:32];
+            7'h17   : reg_data_out <= out_pos[64+:32];
             7'h18   : reg_data_out <= d_out[96+:32];
             7'h19   : reg_data_out <= d_out[128+:32];
             7'h1A   : reg_data_out <= d_out[160+:32];
