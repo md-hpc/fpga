@@ -12,6 +12,9 @@ import sys
 import tempfile
 import time
 import struct
+import csv
+import os
+
 buffers = []
 def parse_hex_line(line):
     line = line.strip()
@@ -373,6 +376,8 @@ while(ol_w0_md.register_map.done23 == 0):
     continue
 print(ol_w0_md.register_map)
 print(len(rcvd_list))
+for i in rcvd_list:
+    csv.writer(open('dump/t1.csv', 'a')).writerow(i)
 ol_w0_md.register_map.read_ctrl = 0
 while(len(rcvd_list)<600):
 	#time.sleep(0.5)
@@ -396,6 +401,8 @@ while(len(rcvd_list)<600):
 		time.sleep(0.1)    
 print()
 print(len(rcvd_list))
+for i in rcvd_list:
+    csv.writer(open('dump/t2.csv', 'a')).writerow(i)
 #print("all pos in", w_pos_in)
 #print("all pos out", w_pos_out)
 #print("all frc in", w_frc_in)
