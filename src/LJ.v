@@ -20,7 +20,7 @@
 //////////////////////////////////////////////////////////////////////////////////
 
 
-module LJ #(parameter LJ_MAX = 32'h3820d27c, parameter CUTOFF = 32'h40200000, parameter UNIVERSE_SIZE = 32'h40400000, parameter DT = 32'h33d6bf95)(
+module LJ #(parameter LJ_MAX = 32'h43bfb70a, parameter CUTOFF = 32'h40200000, parameter UNIVERSE_SIZE = 32'h40400000, parameter DT = 32'h33d6bf95)(
     input [95:0] reference,
     input [95:0] neighbor,
     output [95:0] lj_out
@@ -54,24 +54,28 @@ module LJ #(parameter LJ_MAX = 32'h3820d27c, parameter CUTOFF = 32'h40200000, pa
     fp32_mul mult4 (r8,r4,r12);
     fp32_mul mult5 (r12,r2,r14);
     
-    fp32_div div_a(32'h38c9539c,r8,rec_a);
-    fp32_div div_b(32'h3949539c,r14,rec_b);
+    fp32_div div_a(32'h40c00000,r8,rec_a);
+    fp32_div div_b(32'h41400000,r14,rec_b);
     
     fp32_sub sub_rec(rec_a,rec_b,rec);
+    fp32_mul mul_rec(rec,32'h43200000,coeff);
     
     fp32_sub sub_a(neighbor[0+:32],reference[0+:32],dist[0+:32]);
     fp32_sub sub_b(neighbor[32+:32],reference[32+:32],dist[32+:32]);
     fp32_sub sub_c(neighbor[64+:32],reference[64+:32],dist[64+:32]);
     
-    fp32_mul mul_a(dist[0+:32],rec,lj[0+:32]);
-    fp32_mul mul_b(dist[32+:32],rec,lj[32+:32]);
-    fp32_mul mul_c(dist[64+:32],rec,lj[64+:32]);
+    fp32_mul mul_a(dist[0+:32],coeff,lj[0+:32]);
+    fp32_mul mul_b(dist[32+:32],coeff,lj[32+:32]);
+    fp32_mul mul_c(dist[64+:32],coeff,lj[64+:32]);
     
     fp32_abs_comp_lj comp_a(lj[0+:32],LJ_MAX,min_lj[0+:32]);
     fp32_abs_comp_lj comp_b(lj[32+:32],LJ_MAX,min_lj[32+:32]);
     fp32_abs_comp_lj comp_c(lj[64+:32],LJ_MAX,min_lj[64+:32]);
     
+    fp32_mul mul_fina(min_lj[0+:32],DT,true_lj[0+:32]);
+    fp32_mul mul_finb(min_lj[32+:32],DT,true_lj[32+:32]);
+    fp32_mul mul_finc(min_lj[64+:32],DT,true_lj[64+:32]);
     
-    assign lj_out = r2 == 0? {95{1'b0}} : min_lj; 
+    assign lj_out = r2 == 0? {95{1'b0}} : true_lj; 
     
 endmodule
