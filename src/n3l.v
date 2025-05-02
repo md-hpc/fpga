@@ -24,7 +24,7 @@ module n3l(
     input [95:0] reference,
     input [95:0] neighbor,
     output o,
-    output mo
+    output [95:0] mo
     );
     wire [96:0] mod;
     modr m(reference,neighbor,mod);
