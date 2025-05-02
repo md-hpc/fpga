@@ -35,13 +35,13 @@ module PipelineReader(
     wire [31:0] ref_add [2:0];
     wire [31:0] neigh_add [2:0];
     
-    fp32_add add_ref_x(.a(ref[0+:32]),.b(in[113+:32]),.o(ref_add[0]),.sub(0));
-    fp32_add add_ref_y(.a(ref[32+:32]),.b(in[145+:32]),.o(ref_add[1]),.sub(0));
-    fp32_add add_ref_z(.a(ref[64+:32]),.b(in[177+:32]),.o(ref_add[2]),.sub(0));
+    fp32_add add_ref_x(.a(ref[0+:32]),.b(in[0+:32]),.o(ref_add[0]),.sub(0));
+    fp32_add add_ref_y(.a(ref[32+:32]),.b(in[32+:32]),.o(ref_add[1]),.sub(0));
+    fp32_add add_ref_z(.a(ref[64+:32]),.b(in[64+:32]),.o(ref_add[2]),.sub(0));
     
-    fp32_add add_neigh_x(.a(neigh[0+:32]),.b(in[0+:32]),.o(neigh_add[0]),.sub(0));
-    fp32_add add_neigh_y(.a(neigh[32+:32]),.b(in[32+:32]),.o(neigh_add[1]),.sub(0));
-    fp32_add add_neigh_z(.a(neigh[64+:32]),.b(in[64+:32]),.o(neigh_add[2]),.sub(0));
+    fp32_add add_neigh_x(.a(neigh[0+:32]),.b(in[113+:32]),.o(neigh_add[0]),.sub(0));
+    fp32_add add_neigh_y(.a(neigh[32+:32]),.b(in[145+:32]),.o(neigh_add[1]),.sub(0));
+    fp32_add add_neigh_z(.a(neigh[64+:32]),.b(in[177+:32]),.o(neigh_add[2]),.sub(0));
     
     always @(posedge clk or posedge reset) begin
         if(reset) begin
